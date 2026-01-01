@@ -1,0 +1,93 @@
+#KMF VERSION 1.0
+
+//
+// CORE STUFF
+//
+
+//copy readme
+origin: readme.md
+target: test_project@_external_shared@KalaLua@readme.md
+action: forcecopy
+
+//copy license
+origin: LICENSE.md
+target: test_project@_external_shared@KalaLua@LICENSE.md
+action: forcecopy
+
+//copy include files
+origin: include
+target: test_project@_external_shared@KalaLua@include
+action: forcecopy
+
+//copy docs
+origin: docs
+target: test_project@_external_shared@KalaLua@docs
+action: forcecopy
+
+//
+// BINARIES
+//
+
+//copy kalalua debug dll
+origin: debug@KalaLua1d.dll
+target: test_project@_external_shared@KalaLua@debug@KalaLua1d.dll
+action: forcecopy
+
+//copy lua debug dll
+origin: _external_shared@lua@debug@lua5_5d.dll
+target: test_project@_external_shared@KalaLua@debug@lua5_5d.dll
+action: forcecopy
+
+//copy kalalua debug lib
+origin: debug@KalaLua1d.lib
+target: test_project@_external_shared@KalaLua@debug@KalaLua1d.lib
+action: forcecopy
+
+//copy lua debug lib
+origin: _external_shared@lua@debug@lua5_5d.lib
+target: test_project@_external_shared@KalaLua@debug@lua5_5d.lib
+action: forcecopy
+
+//copy kalalua debug pdb
+origin: debug@KalaLua1d.pdb
+target: test_project@_external_shared@KalaLua@debug@KalaLua1d.pdb
+action: forcecopy
+
+//copy lua debug pdb
+origin: _external_shared@lua@debug@lua5_5d.pdb
+target: test_project@_external_shared@KalaLua@debug@lua5_5d.pdb
+action: forcecopy
+
+//copy kalalua release dll
+origin: release@KalaLua1.dll
+target: test_project@_external_shared@KalaLua@release@KalaLua1.dll
+action: forcecopy
+
+//copy lua release dll
+origin: _external_shared@lua@release@lua5_5.dll
+target: test_project@_external_shared@KalaLua@release@lua5_5.dll
+action: forcecopy
+
+//copy release lib
+origin: release@KalaLua1.lib
+target: test_project@_external_shared@KalaLua@release@KalaLua1.lib
+action: forcecopy
+
+//copy lua release lib
+origin: _external_shared@lua@release@lua5_5.lib
+target: test_project@_external_shared@KalaLua@release@lua5_5.lib
+action: forcecopy
+
+//
+// EXTERNAL LIBRARIES
+//
+
+//KalaHeaders
+origin: _external_shared@KalaHeaders
+target: test_project@_external_shared@KalaHeaders,
+action: copy
+
+//lua
+origin: _external_shared@lua
+target: test_project@_external_shared@lua
+action: copy

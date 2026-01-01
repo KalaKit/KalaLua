@@ -1,0 +1,1 @@
+This is a standalone test project showcasing how to use KalaLua. All the content it requires is within the test_project folder.
