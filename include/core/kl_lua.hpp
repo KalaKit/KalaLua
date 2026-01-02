@@ -37,6 +37,8 @@ namespace KalaLua::Core
 	using std::bad_variant_access;
 	using std::holds_alternative;
 	using std::forward;
+	using std::optional;
+	using std::nullopt;
 
 	using KalaHeaders::KalaLog::Log;
 	using KalaHeaders::KalaLog::LogType;
@@ -75,13 +77,61 @@ namespace KalaLua::Core
 		static bool LoadScript(const string& script);
 
 		//Call a function from one of the loaded lua scripts with N number of args,
+		//default void-only return type, cannot return any LuaVar types,
 		//empty namespace calls function in global namespace,
 		//no dot in namespace calls function in parent namespace,
 		//dotted namespace allows nesting namespace calls (my.name.space.function)
 		static bool CallFunction(
 			const string& functionName,
 			const string& functionNamespace,
-			const vector<LuaVar>& args = {});
+			const vector<LuaVar>& args = {})
+		{
+			return _CallFunction(
+				functionName,
+				functionNamespace,
+				args);
+		}
+
+		//Call a function from one of the loaded lua scripts with N number of args,
+		//returns void on failure, can return any LuaVar type,
+		//empty namespace calls function in global namespace,
+		//no dot in namespace calls function in parent namespace,
+		//dotted namespace allows nesting namespace calls (my.name.space.function)
+		template<typename R>
+		static optional<R> CallFunction(
+			const string& functionName,
+			const string& functionNamespace,
+			const vector<LuaVar>& args = {})
+		{
+			static_assert(
+				IsLuaVarCompatible<R>,
+				"Unsupported LuaVar return type");
+
+			LuaVar ret{};
+			if (!_CallFunction(
+				functionName,
+				functionNamespace,
+				args,
+				&ret))
+			{
+				return nullopt;
+			}
+
+			try
+			{
+				return ExtractLuaVar<R>(ret);
+			}
+			catch (...)
+			{
+				Log::Print(
+					"Unsupported variable type was passed to CallFunction function '" + functionName + "'!",
+					"KALALUA_CALL_FUNCTION",
+					LogType::LOG_ERROR,
+					2);
+
+				return nullopt;
+			}
+		}
 
 		//Register a function into KalaLua for lua to use externally,
 		//this overload accepts functionals,
@@ -100,7 +150,7 @@ namespace KalaLua::Core
 			if constexpr (!allArgsSupported)
 			{
 				Log::Print(
-					"Unsupported variable type was passed to function '" + functionName + "'!",
+					"Unsupported variable type was passed to RegisterFunction function '" + functionName + "'!",
 					"KALALUA_REGISTER_FUNCTION",
 					LogType::LOG_ERROR,
 					2);
@@ -229,6 +279,13 @@ namespace KalaLua::Core
 				"KalaLua type cast error",
 				"ExtractLuaVar failed to cast unsupported type!");
 		}
+
+		//The internal true function caller
+		static bool _CallFunction(
+			const string& functionName,
+			const string& functionNamespace,
+			const vector<LuaVar>& args,
+			LuaVar* outReturn = nullptr);
 
 		//The internal true register function that is used
 		//to register the function after parsing args

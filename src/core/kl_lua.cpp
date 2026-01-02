@@ -196,10 +196,11 @@ namespace KalaLua::Core
 		return true;
 	}
 
-	bool Lua::CallFunction(
+	bool Lua::_CallFunction(
 		const string& functionName,
 		const string& functionNamespace,
-		const vector<LuaVar>& args)
+		const vector<LuaVar>& args,
+		LuaVar* outReturn)
 	{
 		if (functionName.empty())
 		{
@@ -306,7 +307,7 @@ namespace KalaLua::Core
 		int status = lua_pcall(
 			state,
 			scast<int>(args.size()),
-			0,
+			outReturn ? 1 : 0, //allow one return from lua if outReturn is assigned
 			0);
 
 		if (status != LUA_OK)
@@ -323,6 +324,57 @@ namespace KalaLua::Core
 			lua_pop(state, 1);
 
 			return false;
+		}
+
+		if (outReturn)
+		{
+			if (lua_gettop(state) != 1)
+			{
+				Log::Print(
+					"Lua function '" + functionName + "' returned multiple values!",
+					"KALALUA_CALL_FUNCTION",
+					LogType::LOG_ERROR,
+					2);
+
+				lua_settop(state, 0);
+				return false;
+			}
+
+			int type = lua_type(state, -1);
+
+			switch (type)
+			{
+			case LUA_TNUMBER:
+			{
+				lua_Number n = lua_tonumber(state, -1);
+
+				//preserve integer if possible
+				if (lua_isinteger(state, -1)) *outReturn = scast<int>(n);
+				else *outReturn = scast<double>(n);
+
+				break;
+			}
+			case LUA_TBOOLEAN:
+				*outReturn = scast<bool>(lua_toboolean(state, -1));
+				break;
+			case LUA_TSTRING:
+				*outReturn = string(lua_tostring(state, -1));
+				break;
+			case LUA_TNIL:
+				//lua returned nil - we do nothing with that here
+				break;
+			default:
+				Log::Print(
+					"Unsupported Lua return type from function '" + functionName + "'!",
+					"KALALUA_CALL_FUNCTION",
+					LogType::LOG_ERROR,
+					2);
+
+				lua_pop(state, 1);
+				return false;
+			}
+
+			lua_pop(state, 1);
 		}
 
 		if (functionNamespace.empty())
