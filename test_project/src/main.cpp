@@ -37,18 +37,17 @@ int main()
 
 	for (const auto& f : GetFunctions())
 	{
-		Lua::LoadFunction(
+		Lua::RegisterFunction(
 			f.functionName,
 			f.functionNamespace,
 			f.targetFunction);
 	}
 
-	for (const auto& s : GetScripts())
-	{
-		Lua::LoadScript(s);
-	}
+	for (const auto& s : GetScripts()) Lua::LoadScript(s);
 
-	Lua::CallFunction("luaHello");
+	Lua::CallFunction("luaHello", "");
+
+	Lua::CallFunction("mathtest", "", { 1, 2 });
 
 	cout << "ready...\n";
 
