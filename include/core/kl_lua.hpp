@@ -20,6 +20,8 @@ extern "C"
 #include "KalaHeaders/core_utils.hpp"
 #include "KalaHeaders/log_utils.hpp"
 
+#include "core/kl_core.hpp"
+
 namespace KalaLua::Core
 {
 	using std::string;
@@ -30,6 +32,8 @@ namespace KalaLua::Core
 	using std::index_sequence;
 	using std::index_sequence_for;
 	using std::get;
+	using std::bad_variant_access;
+	using std::holds_alternative;
 
 	using KalaHeaders::KalaLog::Log;
 	using KalaHeaders::KalaLog::LogType;
@@ -148,7 +152,36 @@ namespace KalaLua::Core
 			const vector<LuaVar>& args,
 			index_sequence<I...>)
 		{
-			targetFunction(get<Args>(args[I])...);
+			targetFunction(ExtractLuaVar<Args>(args[I])...);
+		}
+
+		//Numeric extraction helper to help lua cast into int/float/double correctly
+		template<typename T>
+		static T ExtractLuaVar(const LuaVar& v)
+		{
+			if constexpr (is_same_v<T, int>)
+			{
+				if (holds_alternative<int>(v))     return get<int>(v);
+				if (holds_alternative<double>(v))  return scast<int>(get<double>(v));
+				if (holds_alternative<float>(v))   return scast<int>(get<float>(v));
+			}
+			else if constexpr (is_same_v<T, float>)
+			{
+				if (holds_alternative<float>(v))   return get<float>(v);
+				if (holds_alternative<double>(v))  return scast<float>(get<double>(v));
+				if (holds_alternative<int>(v))     return scast<float>(get<int>(v));
+			}
+			else if constexpr (is_same_v<T, double>)
+			{
+				if (holds_alternative<double>(v)) return get<double>(v);
+				if (holds_alternative<int>(v))    return scast<double>(get<int>(v));
+				if (holds_alternative<float>(v))  return scast<double>(get<float>(v));
+			}
+			else return get<T>(v);
+
+			KalaLuaCore::ForceClose(
+				"KalaLua type cast error",
+				"ExtractLuaVar failed to cast unsupported type!");
 		}
 
 		//The internal true register function that is used

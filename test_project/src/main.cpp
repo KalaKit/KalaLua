@@ -6,6 +6,7 @@
 #include <iostream>
 #include <functional>
 #include <filesystem>
+#include <string>
 
 #include "core/kl_lua.hpp"
 
@@ -16,17 +17,58 @@ using std::cin;
 using std::function;
 using std::filesystem::current_path;
 using std::filesystem::path;
+using std::string;
+using std::string_view;
+using std::to_string;
+using std::setprecision;
 
 int main()
 {
 	Lua::Initialize();
 
 	Lua::RegisterFunction(
-		"hello",
-		"Test",
-		function<void()>([]() 
+		"double_add",
+		"kalalua_test",
+		function<void(double, double)>([](double a, double b)
 			{ 
-				cout << "[CPP] hello from c++ function\n"; 
+				double result = a + b;
+				cout << "[CPP] added double b to double a: '" << setprecision(15) << result << "'\n";
+			}));
+
+	Lua::RegisterFunction(
+		"float_subtract",
+		"kalalua_test",
+		function<void(float, float)>([](float a, float b)
+			{
+				float result = a - b;
+				cout << "[CPP] subtracted float b from float a: '" << setprecision(6) << result << "'\n";
+			}));
+
+	Lua::RegisterFunction(
+		"int_multiply",
+		"kalalua_test",
+		function<void(int, int)>([](int a, int b)
+			{
+				int result = a * b;
+				cout << "[CPP] multiplied int a by int b: '" << setprecision(0) << result << "'\n";
+			}));
+
+	Lua::RegisterFunction(
+		"double_divide",
+		"kalalua_test",
+		function<void(double, double)>([](double a, double b)
+			{
+				double result = a / b;
+				cout << "[CPP] divided double a by double b: '" << setprecision(15) << result << "'\n";
+			}));
+
+	Lua::RegisterFunction(
+		"string_print",
+		"kalalua_test",
+		function<void(string, string)>([](string a, string b)
+			{
+				string result = a + ", " + b;
+				cout << "[CPP] added string b to string a: '" << result << "'\n";
 			}));
 
 	Lua::LoadScript(
@@ -36,7 +78,7 @@ int main()
 
 	Lua::CallFunction("luaHello", "");
 
-	Lua::CallFunction("mathtest", "", { 1, 2 });
+	Lua::CallFunction("bool_compare", "", { 550.4f, 180.565f });
 
 	cout << "ready...\n";
 
