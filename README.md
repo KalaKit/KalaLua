@@ -2,7 +2,7 @@
 
 **KalaLua** is a C++ 20 wrapper library around Lua for Windows (Linux coming in the future) that allows you to route Lua calls to one middleman library without needing Lua itself in any way inside your own program.
 
-An example project showcasing how to use **KalaLua** has been created at the [kalakit_test_projects repository](https://github.com/greenlaser/kalakit_test_projects/tree/main/kalalua).
+An example project showcasing how to use **KalaLua** has been created at the [kalakit_test_projects repository](https://github.com/greeenlaser/kalakit_test_projects/tree/main/KalaLua).
 
 ---
 
