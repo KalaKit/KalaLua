@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <filesystem>
 
 #include "core/kl_lua.hpp"
 
@@ -17,6 +18,8 @@ using std::cin;
 using std::vector;
 using std::string;
 using std::function;
+using std::filesystem::current_path;
+using std::filesystem::path;
 
 struct LuaFunction
 {
@@ -45,6 +48,8 @@ int main()
 		Lua::LoadScript(s);
 	}
 
+	Lua::CallFunction("luaHello");
+
 	cout << "ready...\n";
 
 	cin.get();
@@ -60,12 +65,26 @@ vector<LuaFunction> GetFunctions()
 {
 	vector<LuaFunction> functions{};
 
+	functions.push_back(
+	{
+		"hello",
+		"Test",
+		[]()
+		{
+			cout << "[CPP] hello from c++ function\n";
+		}
+	});
+
 	return functions;
 }
 
 vector<string> GetScripts()
 {
 	vector<string> scripts{};
+
+	path luaFolder = path(current_path() / "files" / "scripts");
+
+	scripts.push_back(path(luaFolder / "test.lua").string());
 
 	return scripts;
 }

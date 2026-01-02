@@ -95,6 +95,12 @@ add_compile_definitions(
 	PROGRAM_VERSION="${PROGRAM_VERSION}"
 )
 
+# Copy files directory
+add_custom_command(TARGET test-project POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:test-project>/files"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/files" "$<TARGET_FILE_DIR:test-project>/files"
+)
+
 # Copy external binaries
 if(IS_RELEASE)
 	set(BIN_KALALUA "${EXT_KALALUA_DIR}/release")
