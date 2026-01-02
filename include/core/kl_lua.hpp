@@ -28,12 +28,15 @@ namespace KalaLua::Core
 	using std::function;
 	using std::vector;
 	using std::variant;
+	using std::is_pointer_v;
 	using std::is_same_v;
+	using std::is_invocable_r_v;
 	using std::index_sequence;
 	using std::index_sequence_for;
 	using std::get;
 	using std::bad_variant_access;
 	using std::holds_alternative;
+	using std::forward;
 
 	using KalaHeaders::KalaLog::Log;
 	using KalaHeaders::KalaLog::LogType;
@@ -81,6 +84,7 @@ namespace KalaLua::Core
 			const vector<LuaVar>& args = {});
 
 		//Register a function into KalaLua for lua to use externally,
+		//this overload accepts functionals,
 		//accepts N number of any args defined in LuaVar,
 		//empty namespace moves function to global namespace,
 		//no dot in namespace moves function to parent namespace,
@@ -131,7 +135,49 @@ namespace KalaLua::Core
 		}
 
 		//Register a function into KalaLua for lua to use externally,
-		//allows custom lua functions, recommended only for advanced users,
+		//this overload accepts free functions,
+		//accepts N number of any args defined in LuaVar,
+		//empty namespace moves function to global namespace,
+		//no dot in namespace moves function to parent namespace,
+		//dotted namespace allows nesting namespaces (my.name.space)
+		template<typename... Args>
+		static inline bool RegisterFunction(
+			const string& functionName,
+			const string& functionNamespace,
+			void (*func)(Args...))
+		{
+			return RegisterFunction(
+				functionName,
+				functionNamespace,
+				function<void(Args...)>(func));
+		}
+
+		//Register a function into KalaLua for lua to use externally,
+		//this overload accepts lambdas and functors,
+		//accepts N number of any args defined in LuaVar,
+		//empty namespace moves function to global namespace,
+		//no dot in namespace moves function to parent namespace,
+		//dotted namespace allows nesting namespaces (my.name.space)
+		template<typename... Args, typename F>
+		requires
+			(
+				is_invocable_r_v<void, F, Args...>
+				&& !is_pointer_v<decay_t<F>>
+				&& !is_same_v<decay_t<F>, function<void(Args...)>>
+			)
+		static inline bool RegisterFunction(
+			const string& functionName,
+			const string& functionNamespace,
+			F&& func)
+		{
+			return RegisterFunction(
+				functionName,
+				functionNamespace,
+				function<void(Args...)>(forward<F>(func)));
+		}
+
+		//Register a function into KalaLua for lua to use externally,
+		//this overload accepts custom lua functions, recommended only for advanced users,
 		//empty namespace moves function to global namespace,
 		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
