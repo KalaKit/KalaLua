@@ -4,6 +4,9 @@
 //Read LICENSE.md for more information.
 
 #include <iostream>
+#include <vector>
+#include <string>
+#include <functional>
 
 #include "core/kl_lua.hpp"
 
@@ -11,12 +14,36 @@ using KalaLua::Core::Lua;
 
 using std::cout;
 using std::cin;
+using std::vector;
+using std::string;
+using std::function;
+
+struct LuaFunction
+{
+	string functionName{};
+	string functionNamespace{};
+	function<void()> targetFunction{};
+};
+
+static vector<LuaFunction> GetFunctions();
+static vector<string> GetScripts();
 
 int main()
 {
 	Lua::Initialize();
 
-	lua_State* state = Lua::GetLuaState();
+	for (const auto& f : GetFunctions())
+	{
+		Lua::LoadFunction(
+			f.functionName,
+			f.functionNamespace,
+			f.targetFunction);
+	}
+
+	for (const auto& s : GetScripts())
+	{
+		Lua::LoadScript(s);
+	}
 
 	cout << "ready...\n";
 
@@ -27,4 +54,18 @@ int main()
 	Lua::Shutdown();
 
 	return 0;
+}
+
+vector<LuaFunction> GetFunctions()
+{
+	vector<LuaFunction> functions{};
+
+	return functions;
+}
+
+vector<string> GetScripts()
+{
+	vector<string> scripts{};
+
+	return scripts;
 }
