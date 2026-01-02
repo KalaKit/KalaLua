@@ -332,7 +332,7 @@ namespace KalaLua::Core
 				+ functionName + "' with '" 
 				+ to_string(args.size()) + "' args.",
 				"KALALUA_CALL_FUNCTION",
-				LogType::LOG_DEBUG);
+				LogType::LOG_SUCCESS);
 		}
 		else
 		{
@@ -342,7 +342,7 @@ namespace KalaLua::Core
 				+ functionNamespace + "' with '" 
 				+ to_string(args.size()) + "' args.",
 				"KALALUA_CALL_FUNCTION",
-				LogType::LOG_DEBUG);
+				LogType::LOG_SUCCESS);
 		}
 
 		return true;

@@ -4,8 +4,6 @@
 //Read LICENSE.md for more information.
 
 #include <iostream>
-#include <vector>
-#include <string>
 #include <functional>
 #include <filesystem>
 
@@ -15,35 +13,26 @@ using KalaLua::Core::Lua;
 
 using std::cout;
 using std::cin;
-using std::vector;
-using std::string;
 using std::function;
 using std::filesystem::current_path;
 using std::filesystem::path;
-
-struct LuaFunction
-{
-	string functionName{};
-	string functionNamespace{};
-	function<void()> targetFunction{};
-};
-
-static vector<LuaFunction> GetFunctions();
-static vector<string> GetScripts();
 
 int main()
 {
 	Lua::Initialize();
 
-	for (const auto& f : GetFunctions())
-	{
-		Lua::RegisterFunction(
-			f.functionName,
-			f.functionNamespace,
-			f.targetFunction);
-	}
+	Lua::RegisterFunction(
+		"hello",
+		"Test",
+		function<void()>([]() 
+			{ 
+				cout << "[CPP] hello from c++ function\n"; 
+			}));
 
-	for (const auto& s : GetScripts()) Lua::LoadScript(s);
+	Lua::LoadScript(
+		{
+			path(current_path() / "files" / "scripts" / "test.lua").string()
+		});
 
 	Lua::CallFunction("luaHello", "");
 
@@ -58,32 +47,4 @@ int main()
 	Lua::Shutdown();
 
 	return 0;
-}
-
-vector<LuaFunction> GetFunctions()
-{
-	vector<LuaFunction> functions{};
-
-	functions.push_back(
-	{
-		"hello",
-		"Test",
-		[]()
-		{
-			cout << "[CPP] hello from c++ function\n";
-		}
-	});
-
-	return functions;
-}
-
-vector<string> GetScripts()
-{
-	vector<string> scripts{};
-
-	path luaFolder = path(current_path() / "files" / "scripts");
-
-	scripts.push_back(path(luaFolder / "test.lua").string());
-
-	return scripts;
 }

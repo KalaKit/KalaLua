@@ -79,7 +79,7 @@ namespace KalaLua::Core
 		//Register a function into KalaLua for lua to use externally,
 		//accepts N number of any args defined in LuaVar,
 		//empty namespace moves function to global namespace,
-		//no dot moves namespace to parent namespace,
+		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
 		template<typename... Args>
 		static inline bool RegisterFunction(
@@ -129,7 +129,7 @@ namespace KalaLua::Core
 		//Register a function into KalaLua for lua to use externally,
 		//allows custom lua functions, recommended only for advanced users,
 		//empty namespace moves function to global namespace,
-		//no dot moves namespace to parent namespace,
+		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
 		static bool RegisterFunction(
 			const string& functionName,
