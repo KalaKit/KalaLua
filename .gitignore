@@ -7,10 +7,6 @@ build/
 /release/
 /debug/
 
-# Release and Debug in test project folder
-/test_project/release/
-/test_project/debug/
-
 # Large files
 *.pdb
 *.obj
