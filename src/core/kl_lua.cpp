@@ -40,13 +40,14 @@ using std::function;
 using std::visit;
 using std::decay_t;
 using std::is_same_v;
+using std::optional;
 
 static int LuaPanic(lua_State* state);
 
 static int LuaFunctionTrampolineArgs(lua_State* state);
 static int LuaFunctionTrampolineCustom(lua_State* state);
 
-static vector<function<void(const vector<LuaVar>&)>*> loadedArgFunctions{};
+static vector<function<optional<LuaVar>(const vector<LuaVar>&)>*> loadedArgFunctions{};
 static vector<function<int(lua_State*)>*> loadedCustomFunctions{};
 
 namespace KalaLua::Core
@@ -400,7 +401,7 @@ namespace KalaLua::Core
 		return true;
 	}
 
-	bool Lua::RegisterFunction(
+	void Lua::RegisterFunction(
 		const string& functionName,
 		const string& functionNamespace,
 		const function<int(lua_State*)>& targetFunction)
@@ -414,7 +415,7 @@ namespace KalaLua::Core
 				LogType::LOG_ERROR,
 				2);
 
-			return false;
+			return;
 		}
 		if (functionNamespace.size() > 50)
 		{
@@ -424,7 +425,7 @@ namespace KalaLua::Core
 				LogType::LOG_ERROR,
 				2);
 
-			return false;
+			return;
 		}
 		if (!targetFunction)
 		{
@@ -434,7 +435,7 @@ namespace KalaLua::Core
 				LogType::LOG_ERROR,
 				2);
 
-			return false;
+			return;
 		}
 
 		if (!isInitialized)
@@ -445,7 +446,7 @@ namespace KalaLua::Core
 				LogType::LOG_ERROR,
 				2);
 
-			return false;
+			return;
 		}
 
 		//no namespace
@@ -519,15 +520,12 @@ namespace KalaLua::Core
 				"KALALUA_REGISTER_FUNCTION",
 				LogType::LOG_SUCCESS);
 		}
-
-		return true;
 	}
 
 	bool Lua::_RegisterFunction(
 		const string& functionName,
 		const string& functionNamespace,
-		function<void(const vector<LuaVar>&)> invoker,
-		size_t argCount)
+		function<optional<LuaVar>(const vector<LuaVar>&)> invoker)
 	{
 		if (functionName.empty()
 			|| functionName.size() > 50)
@@ -604,7 +602,7 @@ namespace KalaLua::Core
 			}
 		}
 
-		auto* storedf = new function<void(const vector<LuaVar>&)>(move(invoker));
+		auto* storedf = new function<optional<LuaVar>(const vector<LuaVar>&)>(move(invoker));
 		loadedArgFunctions.push_back(storedf);
 
 		//push user data (upvalue)
@@ -671,7 +669,8 @@ int LuaPanic(lua_State* state)
 
 int LuaFunctionTrampolineArgs(lua_State* state)
 {
-	auto* f = scast<function<void(const vector<LuaVar>&)>*>(lua_touserdata(state, lua_upvalueindex(1)));
+	auto* f = scast<function<optional<LuaVar>(const vector<LuaVar>&)>*>(
+		lua_touserdata(state, lua_upvalueindex(1)));
 
 	if (!f)
 	{
@@ -700,14 +699,29 @@ int LuaFunctionTrampolineArgs(lua_State* state)
 		default:
 			return luaL_error(
 				state,
-				"KALALUA ERROR: User passed unsupported types to LoadFunction!");
+				"KALALUA ERROR: User passed unsupported types to registered function!");
 		}
 	}
 
 	//call the function
-	(*f)(args);
+	auto ret = (*f)(args);
+
+	if (!ret.has_value()) return 0;
 	
-	return 0;
+	//push LuaVar return
+	visit([state](auto&& value)
+		{
+			using T = decay_t<decltype(value)>;
+
+			if constexpr      (is_same_v<T, int>)    lua_pushinteger(state, value);
+			else if constexpr (is_same_v<T, float>)  lua_pushnumber(state, value);
+			else if constexpr (is_same_v<T, double>) lua_pushnumber(state, value);
+			else if constexpr (is_same_v<T, bool>)   lua_pushboolean(state, value);
+			else if constexpr (is_same_v<T, string>) lua_pushstring(state, value.c_str());
+		}, *ret);
+
+	//lua consumes one return value
+	return 1;
 }
 
 int LuaFunctionTrampolineCustom(lua_State* state)

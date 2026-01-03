@@ -28,6 +28,7 @@ namespace KalaLua::Core
 	using std::function;
 	using std::vector;
 	using std::variant;
+	using std::is_void_v;
 	using std::is_pointer_v;
 	using std::is_same_v;
 	using std::is_invocable_r_v;
@@ -81,12 +82,12 @@ namespace KalaLua::Core
 		//empty namespace calls function in global namespace,
 		//no dot in namespace calls function in parent namespace,
 		//dotted namespace allows nesting namespace calls (my.name.space.function)
-		static bool CallFunction(
+		static void CallFunction(
 			const string& functionName,
 			const string& functionNamespace,
 			const vector<LuaVar>& args = {})
 		{
-			return _CallFunction(
+			_CallFunction(
 				functionName,
 				functionNamespace,
 				args);
@@ -105,7 +106,7 @@ namespace KalaLua::Core
 		{
 			static_assert(
 				IsLuaVarCompatible<R>,
-				"Unsupported LuaVar return type");
+				"Unsupported return type was passed to CallFunction");
 
 			LuaVar ret{};
 			if (!_CallFunction(
@@ -134,31 +135,27 @@ namespace KalaLua::Core
 		}
 
 		//Register a function into KalaLua for lua to use externally,
-		//this overload accepts functionals,
+		//this overload accepts functionals and targetFunction can return LuaVar or nothing,
 		//accepts N number of any args defined in LuaVar,
 		//empty namespace moves function to global namespace,
 		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
-		template<typename... Args>
-		static inline bool RegisterFunction(
+		template<typename... Args, typename R>
+		static inline void RegisterFunction(
 			const string& functionName,
 			const string& functionNamespace,
-			const function<void(Args...)>& targetFunction)
+			const function<R(Args...)>& targetFunction)
 		{
-			constexpr bool allArgsSupported = (IsLuaVarCompatible<Args> && ...);
+			static_assert(
+				(IsLuaVarCompatible<Args> && ...),
+				"Unsupported argument type was passed to RegisterFunction");
 
-			if constexpr (!allArgsSupported)
-			{
-				Log::Print(
-					"Unsupported variable type was passed to RegisterFunction function '" + functionName + "'!",
-					"KALALUA_REGISTER_FUNCTION",
-					LogType::LOG_ERROR,
-					2);
+			static_assert(
+				is_void_v<R>
+				|| IsLuaVarCompatible<R>,
+				"Unsupported return type was passed to RegisterFunction");
 
-				return false;
-			}
-
-			auto invoker = [functionName, targetFunction](const vector<LuaVar>& args)
+			auto invoker = [functionName, targetFunction](const vector<LuaVar>& args) -> optional<LuaVar>
 				{
 					if (args.size() != sizeof...(Args))
 					{
@@ -168,62 +165,51 @@ namespace KalaLua::Core
 							LogType::LOG_ERROR,
 							2);
 
-						return;
+						return nullopt;
 					}
 
-					InvokeTyped(
-						targetFunction,
-						args,
-						index_sequence_for<Args...>{});
+					if constexpr (is_void_v<R>)
+					{
+						InvokeTyped(
+							targetFunction,
+							args,
+							index_sequence_for<Args...>{});
+
+						return nullopt;
+					}
+					else
+					{
+						R result = InvokeTypedReturn(
+							targetFunction,
+							args,
+							index_sequence_for<Args...>{});
+
+						return LuaVar{ result };
+					}
 				};
 
-			return _RegisterFunction(
+			_RegisterFunction(
 				functionName,
 				functionNamespace,
-				invoker,
-				sizeof...(Args));
+				invoker);
 		}
 
 		//Register a function into KalaLua for lua to use externally,
-		//this overload accepts free functions,
+		//this overload accepts free functions and targetFunction can return LuaVar or nothing,,
 		//accepts N number of any args defined in LuaVar,
 		//empty namespace moves function to global namespace,
 		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
-		template<typename... Args>
-		static inline bool RegisterFunction(
+		template<typename... Args, typename R>
+		static inline void RegisterFunction(
 			const string& functionName,
 			const string& functionNamespace,
-			void (*func)(Args...))
+			R (*func)(Args...))
 		{
-			return RegisterFunction(
+			RegisterFunction(
 				functionName,
 				functionNamespace,
-				function<void(Args...)>(func));
-		}
-
-		//Register a function into KalaLua for lua to use externally,
-		//this overload accepts lambdas and functors,
-		//accepts N number of any args defined in LuaVar,
-		//empty namespace moves function to global namespace,
-		//no dot in namespace moves function to parent namespace,
-		//dotted namespace allows nesting namespaces (my.name.space)
-		template<typename... Args, typename F>
-		requires
-			(
-				is_invocable_r_v<void, F, Args...>
-				&& !is_pointer_v<decay_t<F>>
-				&& !is_same_v<decay_t<F>, function<void(Args...)>>
-			)
-		static inline bool RegisterFunction(
-			const string& functionName,
-			const string& functionNamespace,
-			F&& func)
-		{
-			return RegisterFunction(
-				functionName,
-				functionNamespace,
-				function<void(Args...)>(forward<F>(func)));
+				function<R(Args...)>(func));
 		}
 
 		//Register a function into KalaLua for lua to use externally,
@@ -231,7 +217,7 @@ namespace KalaLua::Core
 		//empty namespace moves function to global namespace,
 		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
-		static bool RegisterFunction(
+		static void RegisterFunction(
 			const string& functionName,
 			const string& functionNamespace,
 			const function<int(lua_State*)>& targetFunction);
@@ -249,6 +235,15 @@ namespace KalaLua::Core
 			index_sequence<I...>)
 		{
 			targetFunction(ExtractLuaVar<Args>(args[I])...);
+		}
+
+		template<typename... Args, size_t... I, typename R>
+		static inline R InvokeTypedReturn(
+			const function<R(Args...)>& targetFunction,
+			const vector<LuaVar>& args,
+			index_sequence<I...>)
+		{
+			return targetFunction(ExtractLuaVar<Args>(args[I])...);
 		}
 
 		//Numeric extraction helper to help lua cast into int/float/double correctly
@@ -292,7 +287,6 @@ namespace KalaLua::Core
 		static bool _RegisterFunction(
 			const string& functionName,
 			const string& functionNamespace,
-			function<void(const vector<LuaVar>&)> invoker,
-			size_t argCount);
+			function<optional<LuaVar>(const vector<LuaVar>&)> invoker);
 	};
 }
