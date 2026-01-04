@@ -84,11 +84,11 @@ target_include_directories(KalaLua PRIVATE
 
 # Preprocessor Defines
 target_compile_definitions(KalaLua PRIVATE 
-	LIB_EXPORT
-    WIN32_LEAN_AND_MEAN
-    NOMINMAX
-	UNICODE
-	_UNICODE
+	LIB_EXPORT          # dll import/export
+	WIN32_LEAN_AND_MEAN # cleaner windows.h
+	NOMINMAX            # skips min/max windows macros in favor of the std variants
+	UNICODE             # selects wide api variants over ansi for UTF16 windows functions
+	_UNICODE            # uses wide text types in the C runtime layer
 )
 
 # Link libraries
