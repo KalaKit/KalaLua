@@ -90,6 +90,10 @@ namespace KalaLua::Core
 		return true;
 	}
 
+	bool Lua::IsInitialized() { return isInitialized; };
+
+	lua_State* Lua::GetLuaState() { return isInitialized ? state : nullptr; }
+
 	bool Lua::LoadScript(const string& script)
 	{
 		if (!isInitialized)
