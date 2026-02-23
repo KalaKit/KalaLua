@@ -17,8 +17,10 @@ endif()
 # Platform Detection
 if (WIN32)
     message(STATUS "[KALALUA] Platform = Windows")
+elseif(UNIX)
+	message(STATUS "[KALALUA] Platform = Unix")
 else()
-    message(FATAL_ERROR "[KALALUA] Unsupported platform. Only Windows is supported.")
+    message(FATAL_ERROR "[KALALUA] Unsupported platform. Only Windows and Unix are supported.")
 endif()
 
 # Build Type Detection

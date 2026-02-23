@@ -1,11 +1,10 @@
-# Default VS stuff
+# IDE stuff
 out/
 build/
 .vs/
-
-# Release and Debug in root folder
-/release/
-/debug/
+.vscode/
+.cache/
+compile_commands.json
 
 # Large files
 *.pdb
