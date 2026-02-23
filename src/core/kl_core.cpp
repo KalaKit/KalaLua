@@ -3,7 +3,9 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
+#ifdef __linux__
 #include <csignal>
+#endif
 
 #include "KalaHeaders/log_utils.hpp"
 
@@ -14,7 +16,9 @@ using KalaHeaders::KalaLog::LogType;
 using KalaHeaders::KalaLog::TimeFormat;
 using KalaHeaders::KalaLog::DateFormat;
 
+#ifdef __linux__
 using std::raise;
+#endif
 
 namespace KalaLua::Core
 {

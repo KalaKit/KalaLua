@@ -22,10 +22,8 @@ extern "C"
 
 using KalaHeaders::KalaLog::Log;
 using KalaHeaders::KalaLog::LogType;
-using KalaHeaders::KalaString::ContainsString;
 using KalaHeaders::KalaString::SplitString;
 
-using KalaLua::Core::Lua;
 using KalaLua::Core::LuaVar;
 using KalaLua::Core::KalaLuaCore;
 
@@ -606,7 +604,7 @@ namespace KalaLua::Core
 			}
 		}
 
-		auto* storedf = new function<optional<LuaVar>(const vector<LuaVar>&)>(move(invoker));
+		auto* storedf = new function<optional<LuaVar>(const vector<LuaVar>&)>(std::move(invoker));
 		loadedArgFunctions.push_back(storedf);
 
 		//push user data (upvalue)
