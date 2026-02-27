@@ -8,22 +8,22 @@
 
 //copy readme
 origin: README.md
-target: ..@kalakit_test_projects@_external_shared@KalaLua@README.md, ..@Elypso-engine@_external_shared@KalaLua@README.md, ..@Elypso-hub@_external_shared@KalaLua@README.md
+target: ..@kalakit_test_projects@_external_shared@KalaLua@README.md, ..@elypso-engine@_external_shared@KalaLua@README.md, ..@elypso-hub@_external_shared@KalaLua@README.md
 action: forcecopy
 
 //copy license
 origin: LICENSE.md
-target: ..@kalakit_test_projects@_external_shared@KalaLua@LICENSE.md, ..@Elypso-engine@_external_shared@KalaLua@LICENSE.md, ..@Elypso-hub@_external_shared@KalaLua@LICENSE.md
+target: ..@kalakit_test_projects@_external_shared@KalaLua@LICENSE.md, ..@elypso-engine@_external_shared@KalaLua@LICENSE.md, ..@elypso-hub@_external_shared@KalaLua@LICENSE.md
 action: forcecopy
 
 //copy include files
 origin: include
-target: ..@kalakit_test_projects@_external_shared@KalaLua@include, ..@Elypso-engine@_external_shared@KalaLua@include, ..@Elypso-hub@_external_shared@KalaLua@include
+target: ..@kalakit_test_projects@_external_shared@KalaLua@include, ..@elypso-engine@_external_shared@KalaLua@include, ..@elypso-hub@_external_shared@KalaLua@include
 action: forcecopy
 
 //copy docs
 origin: docs
-target: ..@kalakit_test_projects@_external_shared@KalaLua@docs, ..@Elypso-engine@_external_shared@KalaLua@docs, ..@Elypso-hub@_external_shared@KalaLua@docs
+target: ..@kalakit_test_projects@_external_shared@KalaLua@docs, ..@elypso-engine@_external_shared@KalaLua@docs, ..@elypso-hub@_external_shared@KalaLua@docs
 action: forcecopy
 
 //
@@ -32,22 +32,22 @@ action: forcecopy
 
 //copy kalalua debug so
 origin: build@linux-debug@libKalaLua1d.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@Elypso-engine@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@Elypso-hub@_external_shared@KalaLua@debug@libKalaLua1d.dll
+target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@elypso-engine@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@elypso-hub@_external_shared@KalaLua@debug@libKalaLua1d.dll
 action: forcecopy
 
 //copy kalalua release so
 origin: build@linux-release@libKalaLua1.lib
-target: ..@kalakit_test_projects@_external_shared@KalaLua@release@libKalaLua1.lib, ..@Elypso-engine@_external_shared@KalaLua@release@libKalaLua1.lib, ..@Elypso-hub@_external_shared@KalaLua@release@libKalaLua1.lib
+target: ..@kalakit_test_projects@_external_shared@KalaLua@release@libKalaLua1.lib, ..@elypso-engine@_external_shared@KalaLua@release@libKalaLua1.lib, ..@elypso-hub@_external_shared@KalaLua@release@libKalaLua1.lib
 action: forcecopy
 
 //copy lua debug so
 origin: _external_shared@lua@debug@liblua5_5d.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@Elypso-engine@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@Elypso-hub@_external_shared@KalaLua@debug@liblua5_5d.dll
+target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@elypso-engine@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@elypso-hub@_external_shared@KalaLua@debug@liblua5_5d.dll
 action: forcecopy
 
 //copy lua release so
 origin: _external_shared@lua@release@liblua5_5.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@release@liblua5_5.dll, ..@Elypso-engine@_external_shared@KalaLua@release@liblua5_5.dll, ..@Elypso-hub@_external_shared@KalaLua@release@liblua5_5.dll
+target: ..@kalakit_test_projects@_external_shared@KalaLua@release@liblua5_5.dll, ..@elypso-engine@_external_shared@KalaLua@release@liblua5_5.dll, ..@elypso-hub@_external_shared@KalaLua@release@liblua5_5.dll
 action: forcecopy
 
 //
@@ -56,10 +56,10 @@ action: forcecopy
 
 //KalaHeaders
 origin: _external_shared@KalaHeaders
-target: ..@kalakit_test_projects@_external_shared@KalaHeaders, ..@Elypso-engine@_external_shared@KalaHeaders, ..@Elypso-hub@_external_shared@KalaHeaders
+target: ..@kalakit_test_projects@_external_shared@KalaHeaders, ..@elypso-engine@_external_shared@KalaHeaders, ..@elypso-hub@_external_shared@KalaHeaders
 action: copy
 
 //lua
 origin: _external_shared@lua
-target: ..@kalakit_test_projects@_external_shared@lua, ..@Elypso-engine@_external_shared@lua, ..@Elypso-hub@_external_shared@lua
+target: ..@kalakit_test_projects@_external_shared@lua, ..@elypso-engine@_external_shared@lua, ..@elypso-hub@_external_shared@lua
 action: copy
