@@ -1,0 +1,41 @@
+//Build script for use with kalamake. Read more at https://github.com/kalakit/kalamake
+
+#version 1.0
+
+#include
+kh: "_external_shared"
+
+#global
+standard: c++20
+binarytype: shared
+sources: "src"
+headers: "include", #kh
+warninglevel: normal
+
+#profile debug-windows
+binaryname: KalaLua1d
+compiler: clang-cl
+buildtype: debug
+buildpath: "build/debug-windows"
+links: "_external_shared/lua/debug/lua5_5d.lib"
+
+#profile release-windows
+binaryname: KalaLua1
+compiler: clang-cl
+buildtype: release
+buildpath: "build/release-windows"
+links: "_external_shared/lua/release/lua5_5.lib"
+
+#profile debug-linux
+binaryname: libKalaLua1d
+compiler: clang++
+buildtype: debug
+buildpath: "build/debug-linux"
+links: "_external_shared/lua/debug/lua5_5d.a"
+
+#profile release-linux
+binaryname: libKalaLua1
+compiler: clang++
+buildtype: release
+buildpath: "build/release-linux"
+links: "_external_shared/lua/release/lua5_5.a"
