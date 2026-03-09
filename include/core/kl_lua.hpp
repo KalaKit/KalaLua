@@ -17,14 +17,15 @@ extern "C"
 #include "lua.h"
 }
 
-#include "KalaHeaders/core_utils.hpp"
-#include "KalaHeaders/log_utils.hpp"
+#include "core_utils.hpp"
+#include "log_utils.hpp"
 
 #include "core/kl_core.hpp"
 
 namespace KalaLua::Core
 {
 	using std::string;
+	using std::string_view;
 	using std::function;
 	using std::vector;
 	using std::variant;
@@ -75,7 +76,7 @@ namespace KalaLua::Core
 		static lua_State* GetLuaState();
 
 		//Load and compile a lua script for use via CallFunction
-		static bool LoadScript(const string& script);
+		static bool LoadScript(string_view script);
 
 		//Call a function from one of the loaded lua scripts with N number of args,
 		//default void-only return type, cannot return any LuaVar types,
@@ -83,8 +84,8 @@ namespace KalaLua::Core
 		//no dot in namespace calls function in parent namespace,
 		//dotted namespace allows nesting namespace calls (my.name.space.function)
 		static void CallFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			const vector<LuaVar>& args = {})
 		{
 			_CallFunction(
@@ -100,8 +101,8 @@ namespace KalaLua::Core
 		//dotted namespace allows nesting namespace calls (my.name.space.function)
 		template<typename R>
 		static optional<R> CallFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			const vector<LuaVar>& args = {})
 		{
 			static_assert(
@@ -125,7 +126,7 @@ namespace KalaLua::Core
 			catch (...)
 			{
 				Log::Print(
-					"Unsupported variable type was passed to CallFunction function '" + functionName + "'!",
+					"Unsupported variable type was passed to CallFunction function '" + string(functionName) + "'!",
 					"KALALUA_CALL_FUNCTION",
 					LogType::LOG_ERROR,
 					2);
@@ -142,8 +143,8 @@ namespace KalaLua::Core
 		//dotted namespace allows nesting namespaces (my.name.space)
 		template<typename... Args, typename R>
 		static inline void RegisterFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			const function<R(Args...)>& targetFunction)
 		{
 			static_assert(
@@ -160,7 +161,7 @@ namespace KalaLua::Core
 					if (args.size() != sizeof...(Args))
 					{
 						Log::Print(
-							"Argument count mismatch when invoking function '" + functionName + "'!",
+							"Argument count mismatch when invoking function '" + string(functionName) + "'!",
 							"KALALUA_REGISTER_FUNCTION",
 							LogType::LOG_ERROR,
 							2);
@@ -202,8 +203,8 @@ namespace KalaLua::Core
 		//dotted namespace allows nesting namespaces (my.name.space)
 		template<typename... Args, typename R>
 		static inline void RegisterFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			R (*func)(Args...))
 		{
 			RegisterFunction(
@@ -218,16 +219,13 @@ namespace KalaLua::Core
 		//no dot in namespace moves function to parent namespace,
 		//dotted namespace allows nesting namespaces (my.name.space)
 		static void RegisterFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			const function<int(lua_State*)>& targetFunction);
 
 		//Shut down KalaLua and the Lua runtime
 		static void Shutdown();
 	private:
-		static inline bool isInitialized{};
-		static inline lua_State* state{};
-
 		template<typename... Args, size_t... I>
 		static inline void InvokeTyped(
 			const function<void(Args...)>& targetFunction,
@@ -277,16 +275,16 @@ namespace KalaLua::Core
 
 		//The internal true function caller
 		static bool _CallFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			const vector<LuaVar>& args,
 			LuaVar* outReturn = nullptr);
 
 		//The internal true register function that is used
 		//to register the function after parsing args
 		static bool _RegisterFunction(
-			const string& functionName,
-			const string& functionNamespace,
+			string_view functionName,
+			string_view functionNamespace,
 			function<optional<LuaVar>(const vector<LuaVar>&)> invoker);
 	};
 }

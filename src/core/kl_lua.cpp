@@ -14,8 +14,8 @@ extern "C"
 #include "lualib.h"
 }
 
-#include "KalaHeaders/log_utils.hpp"
-#include "KalaHeaders/string_utils.hpp"
+#include "log_utils.hpp"
+#include "string_utils.hpp"
 
 #include "core/kl_lua.hpp"
 #include "core/kl_core.hpp"
@@ -50,13 +50,16 @@ static vector<function<int(lua_State*)>*> loadedCustomFunctions{};
 
 namespace KalaLua::Core
 {
+	static bool isInitialized{};
+	static lua_State* state{};
+
 	bool Lua::Initialize()
 	{
 		if (isInitialized)
 		{
 			Log::Print(
 				"Failed to initialize KalaLua because its already initialized!",
-				"KALALUA_INIT",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -68,7 +71,7 @@ namespace KalaLua::Core
 		{
 			Log::Print(
 				"Failed to initialize KalaLua because its state couldn't be created!",
-				"KALALUA_INIT",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -76,6 +79,11 @@ namespace KalaLua::Core
 		}
 
 		luaL_requiref(state, LUA_GNAME, luaopen_base, 1); lua_pop(state, 1);
+		luaL_requiref(state, LUA_STRLIBNAME, luaopen_string, 1); lua_pop(state, 1);
+		luaL_requiref(state, LUA_TABLIBNAME, luaopen_table, 1); lua_pop(state, 1);
+		luaL_requiref(state, LUA_MATHLIBNAME, luaopen_math, 1); lua_pop(state, 1);
+
+		//luaL_openlibs(state);
 
 		lua_atpanic(state, LuaPanic);
 
@@ -83,7 +91,7 @@ namespace KalaLua::Core
 
 		Log::Print(
 			"Finished initializing KalaLua!",
-			"KALALUA_INIT",
+			"KALALUA",
 			LogType::LOG_SUCCESS);
 
 		return true;
@@ -93,13 +101,13 @@ namespace KalaLua::Core
 
 	lua_State* Lua::GetLuaState() { return isInitialized ? state : nullptr; }
 
-	bool Lua::LoadScript(const string& script)
+	bool Lua::LoadScript(string_view script)
 	{
 		if (!isInitialized)
 		{
 			Log::Print(
-				"Failed to load script '" + script + "' because KalaLua is not initialized!",
-				"KALALUA_INIT",
+				"Failed to load script '" + string(script) + "' because KalaLua is not initialized!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -109,8 +117,8 @@ namespace KalaLua::Core
 		if (!state)
 		{
 			Log::Print(
-				"Failed to load script '" + script + "' because KalaLua state is invalid!",
-				"KALALUA_INIT",
+				"Failed to load script '" + string(script) + "' because KalaLua state is invalid!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -120,8 +128,8 @@ namespace KalaLua::Core
 		if (!exists(script))
 		{
 			Log::Print(
-				"Failed to load script '" + script + "' because it does not exist!",
-				"KALALUA_SCRIPT",
+				"Failed to load script '" + string(script) + "' because it does not exist!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -131,8 +139,8 @@ namespace KalaLua::Core
 		if (!is_regular_file(script))
 		{
 			Log::Print(
-				"Failed to load script '" + script + "' because it is not a regular file!",
-				"KALALUA_SCRIPT",
+				"Failed to load script '" + string(script) + "' because it is not a regular file!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -142,8 +150,8 @@ namespace KalaLua::Core
 		if (path(script).extension() != ".lua")
 		{
 			Log::Print(
-				"Failed to load script '" + script + "' because its extension is incorrect!",
-				"KALALUA_SCRIPT",
+				"Failed to load script '" + string(script) + "' because its extension is incorrect!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -152,15 +160,15 @@ namespace KalaLua::Core
 
 		//load (compile) the script
 
-		int status = luaL_loadfile(state, script.c_str());
+		int status = luaL_loadfile(state, string(script).c_str());
 		if (status != LUA_OK)
 		{
 			const char* err = lua_tostring(state, -1);
 			string errValue = err ? err : "Unknown error.";
 
 			Log::Print(
-				"Lua load error in script '" + script + "': " + errValue,
-				"KALALUA_SCRIPT",
+				"Lua load error in script '" + string(script) + "': " + errValue,
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -182,8 +190,8 @@ namespace KalaLua::Core
 			string errValue = err ? err : "Unknown error.";
 
 			Log::Print(
-				"Lua runtime error in script '" + script + "': " + errValue,
-				"KALALUA_SCRIPT",
+				"Lua runtime error in script '" + string(script) + "': " + errValue,
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -193,35 +201,46 @@ namespace KalaLua::Core
 		}
 
 		Log::Print(
-			"Loaded script '" + script + "'!",
-			"KALALUA_SCRIPT",
+			"Loaded script '" + string(script) + "'!",
+			"KALALUA",
 			LogType::LOG_SUCCESS);
 
 		return true;
 	}
 
 	bool Lua::_CallFunction(
-		const string& functionName,
-		const string& functionNamespace,
+		string_view functionName,
+		string_view functionNamespace,
 		const vector<LuaVar>& args,
 		LuaVar* outReturn)
 	{
-		if (functionName.empty())
+		if (!isInitialized)
 		{
 			Log::Print(
-				"Failed to call function because name was empty!",
-				"KALALUA_CALL_FUNCTION",
+				"Failed to call function because KalaLua is not initialized!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
 			return false;
 		}
 
-		if (!isInitialized)
+		if (!state)
 		{
 			Log::Print(
-				"Failed to call function '" + functionName + "' because KalaLua is not initialized!",
-				"KALALUA_CALL_FUNCTION",
+				"Failed to call function because KalaLua state is invalid!",
+				"KALALUA",
+				LogType::LOG_ERROR,
+				2);
+
+			return false;
+		}
+
+		if (functionName.empty())
+		{
+			Log::Print(
+				"Failed to call function because name was empty!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -234,15 +253,15 @@ namespace KalaLua::Core
 		}
 		else if (functionNamespace.find('.') == string::npos)
 		{
-			lua_getglobal(state, functionNamespace.c_str());
+			lua_getglobal(state, string(functionNamespace).c_str());
 
 			if (!lua_istable(state, -1))
 			{
 				lua_pop(state, 1);
 
 				Log::Print(
-					"Lua namespace '" + functionNamespace + "' does not exist!",
-					"KALALUA_CALL_FUNCTION",
+					"Lua namespace '" + string(functionNamespace) + "' does not exist!",
+					"KALALUA",
 					LogType::LOG_ERROR,
 					2);
 
@@ -265,8 +284,8 @@ namespace KalaLua::Core
 					lua_pop(state, 1);
 
 					Log::Print(
-						"Lua namespace '" + functionNamespace + "' does not exist!",
-						"KALALUA_CALL_FUNCTION",
+						"Lua namespace '" + string(functionNamespace) + "' does not exist!",
+						"KALALUA",
 						LogType::LOG_ERROR,
 						2);
 
@@ -276,7 +295,7 @@ namespace KalaLua::Core
 		}
 
 		//fetch function from resolved namespace
-		lua_getfield(state, -1, functionName.c_str());
+		lua_getfield(state, -1, string(functionName).c_str());
 		lua_remove(state, -2);
 
 		if (!lua_isfunction(state, -1))
@@ -284,8 +303,8 @@ namespace KalaLua::Core
 			lua_pop(state, 1);
 
 			Log::Print(
-				"Lua function '" + functionName + "' does not exist!",
-				"KALALUA_CALL_FUNCTION",
+				"Lua function '" + string(functionName) + "' does not exist!",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -320,8 +339,8 @@ namespace KalaLua::Core
 			string errValue = err ? err : "Unknown error";
 
 			Log::Print(
-				"Lua runtime error with function '" + functionName + "': " + errValue,
-				"KALALUA_CALL_FUNCTION",
+				"Lua runtime error with function '" + string(functionName) + "': " + errValue,
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -335,8 +354,8 @@ namespace KalaLua::Core
 			if (lua_gettop(state) != 1)
 			{
 				Log::Print(
-					"Lua function '" + functionName + "' returned multiple values!",
-					"KALALUA_CALL_FUNCTION",
+					"Lua function '" + string(functionName) + "' returned multiple values!",
+					"KALALUA",
 					LogType::LOG_ERROR,
 					2);
 
@@ -369,8 +388,8 @@ namespace KalaLua::Core
 				break;
 			default:
 				Log::Print(
-					"Unsupported Lua return type from function '" + functionName + "'!",
-					"KALALUA_CALL_FUNCTION",
+					"Unsupported Lua return type from function '" + string(functionName) + "'!",
+					"KALALUA",
 					LogType::LOG_ERROR,
 					2);
 
@@ -385,19 +404,19 @@ namespace KalaLua::Core
 		{
 			Log::Print(
 				"Called global function '" 
-				+ functionName + "' with '" 
+				+ string(functionName) + "' with '" 
 				+ to_string(args.size()) + "' args.",
-				"KALALUA_CALL_FUNCTION",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 		else
 		{
 			Log::Print(
 				"Called function '" 
-				+ functionName + "' in namespace '" 
-				+ functionNamespace + "' with '" 
+				+ string(functionName) + "' in namespace '" 
+				+ string(functionNamespace) + "' with '" 
 				+ to_string(args.size()) + "' args.",
-				"KALALUA_CALL_FUNCTION",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 
@@ -405,16 +424,38 @@ namespace KalaLua::Core
 	}
 
 	void Lua::RegisterFunction(
-		const string& functionName,
-		const string& functionNamespace,
+		string_view functionName,
+		string_view functionNamespace,
 		const function<int(lua_State*)>& targetFunction)
 	{
+		if (!isInitialized)
+		{
+			Log::Print(
+				"Failed to register function because KalaLua is not initialized!",
+				"KALALUA",
+				LogType::LOG_ERROR,
+				2);
+
+			return;
+		}
+
+		if (!state)
+		{
+			Log::Print(
+				"Failed to register function because KalaLua state is invalid!",
+				"KALALUA",
+				LogType::LOG_ERROR,
+				2);
+
+			return;
+		}
+
 		if (functionName.empty()
 			|| functionName.size() > 50)
 		{
 			Log::Print(
 				"Failed to register function because name was empty or too long.",
-				"KALALUA_REGISTER_FUNCTION",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -423,8 +464,8 @@ namespace KalaLua::Core
 		if (functionNamespace.size() > 50)
 		{
 			Log::Print(
-				"Failed to register function '" + functionName + "' because namespace was too long.",
-				"KALALUA_REGISTER_FUNCTION",
+				"Failed to register function '" + string(functionName) + "' because namespace was too long.",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -433,19 +474,8 @@ namespace KalaLua::Core
 		if (!targetFunction)
 		{
 			Log::Print(
-				"Failed to register function '" + functionName + "' because target function was empty.",
-				"KALALUA_REGISTER_FUNCTION",
-				LogType::LOG_ERROR,
-				2);
-
-			return;
-		}
-
-		if (!isInitialized)
-		{
-			Log::Print(
-				"Failed to register function '" + functionName + "' because KalaLua is not initialized!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Failed to register function '" + string(functionName) + "' because target function was empty.",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -460,14 +490,14 @@ namespace KalaLua::Core
 		//namespace has no dots
 		else if (functionNamespace.find('.') == string::npos)
 		{
-			lua_getglobal(state, functionNamespace.c_str());
+			lua_getglobal(state, string(functionNamespace).c_str());
 
 			if (!lua_istable(state, -1))
 			{
 				lua_pop(state, 1);
 				lua_newtable(state);
 				lua_pushvalue(state, -1);
-				lua_setglobal(state, functionNamespace.c_str());
+				lua_setglobal(state, string(functionNamespace).c_str());
 			}
 		}
 		//namespace has dots
@@ -504,7 +534,7 @@ namespace KalaLua::Core
 		lua_pushcclosure(state, LuaFunctionTrampolineCustom, 1);
 
 		//set global function name
-		lua_setfield(state, -2, functionName.c_str());
+		lua_setfield(state, -2, string(functionName).c_str());
 
 		//pop namespace table
 		lua_pop(state, 1);
@@ -512,30 +542,52 @@ namespace KalaLua::Core
 		if (!functionNamespace.empty())
 		{
 			Log::Print(
-				"Registered function '" + functionName + "' to namespace '" + functionNamespace + "'!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Registered function '" + string(functionName) + "' to namespace '" + string(functionNamespace) + "'!",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 		else
 		{
 			Log::Print(
-				"Registered function '" + functionName + "' to global namespace!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Registered function '" + string(functionName) + "' to global namespace!",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 	}
 
 	bool Lua::_RegisterFunction(
-		const string& functionName,
-		const string& functionNamespace,
+		string_view functionName,
+		string_view functionNamespace,
 		function<optional<LuaVar>(const vector<LuaVar>&)> invoker)
 	{
+		if (!isInitialized)
+		{
+			Log::Print(
+				"Failed to register function because KalaLua is not initialized!",
+				"KALALUA",
+				LogType::LOG_ERROR,
+				2);
+
+			return false;
+		}
+		
+		if (!state)
+		{
+			Log::Print(
+				"Failed to register function because KalaLua state is invalid!",
+				"KALALUA",
+				LogType::LOG_ERROR,
+				2);
+
+			return false;
+		}
+
 		if (functionName.empty()
 			|| functionName.size() > 50)
 		{
 			Log::Print(
 				"Failed to register function because name was empty or too long.",
-				"KALALUA_REGISTER_FUNCTION",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -544,19 +596,8 @@ namespace KalaLua::Core
 		if (functionNamespace.size() > 50)
 		{
 			Log::Print(
-				"Failed to register function '" + functionName + "' because namespace was too long.",
-				"KALALUA_REGISTER_FUNCTION",
-				LogType::LOG_ERROR,
-				2);
-
-			return false;
-		}
-
-		if (!isInitialized)
-		{
-			Log::Print(
-				"Failed to register function '" + functionName + "' because KalaLua is not initialized!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Failed to register function '" + string(functionName) + "' because namespace was too long.",
+				"KALALUA",
 				LogType::LOG_ERROR,
 				2);
 
@@ -571,14 +612,14 @@ namespace KalaLua::Core
 		//namespace has no dots
 		else if (functionNamespace.find('.') == string::npos)
 		{
-			lua_getglobal(state, functionNamespace.c_str());
+			lua_getglobal(state, string(functionNamespace).c_str());
 
 			if (!lua_istable(state, -1))
 			{
 				lua_pop(state, 1);
 				lua_newtable(state);
 				lua_pushvalue(state, -1);
-				lua_setglobal(state, functionNamespace.c_str());
+				lua_setglobal(state, string(functionNamespace).c_str());
 			}
 		}
 		//namespace has dots
@@ -615,7 +656,7 @@ namespace KalaLua::Core
 		lua_pushcclosure(state, LuaFunctionTrampolineArgs, 1);
 
 		//set global function name
-		lua_setfield(state, -2, functionName.c_str());
+		lua_setfield(state, -2, string(functionName).c_str());
 
 		//pop namespace table
 		lua_pop(state, 1);
@@ -623,15 +664,15 @@ namespace KalaLua::Core
 		if (!functionNamespace.empty())
 		{
 			Log::Print(
-				"Registered function '" + functionName + "' to namespace '" + functionNamespace + "'!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Registered function '" + string(functionName) + "' to namespace '" + string(functionNamespace) + "'!",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 		else
 		{
 			Log::Print(
-				"Registered function '" + functionName + "' to global namespace!",
-				"KALALUA_REGISTER_FUNCTION",
+				"Registered function '" + string(functionName) + "' to global namespace!",
+				"KALALUA",
 				LogType::LOG_SUCCESS);
 		}
 
@@ -644,7 +685,7 @@ namespace KalaLua::Core
 
 		Log::Print(
 			"Shutting down KalaLua.",
-			"KALALUA_SHUTDOWN",
+			"KALALUA",
 			LogType::LOG_INFO);
 
 		for (auto* f : loadedArgFunctions) delete f;

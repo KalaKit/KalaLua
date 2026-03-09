@@ -7,7 +7,7 @@
 #include <csignal>
 #endif
 
-#include "KalaHeaders/log_utils.hpp"
+#include "log_utils.hpp"
 
 #include "core/kl_core.hpp"
 
