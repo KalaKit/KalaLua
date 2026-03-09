@@ -31,23 +31,13 @@ action: forcecopy
 //
 
 //copy kalalua debug so
-origin: build@linux-debug@libKalaLua1d.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@elypso-engine@_external_shared@KalaLua@debug@libKalaLua1d.dll, ..@elypso-hub@_external_shared@KalaLua@debug@libKalaLua1d.dll
+origin: build@debug-linux@libKalaLua1d.so
+target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@libKalaLua1d.so, ..@elypso-engine@_external_shared@KalaLua@debug@libKalaLua1d.so, ..@elypso-hub@_external_shared@KalaLua@debug@libKalaLua1d.so
 action: forcecopy
 
 //copy kalalua release so
-origin: build@linux-release@libKalaLua1.lib
-target: ..@kalakit_test_projects@_external_shared@KalaLua@release@libKalaLua1.lib, ..@elypso-engine@_external_shared@KalaLua@release@libKalaLua1.lib, ..@elypso-hub@_external_shared@KalaLua@release@libKalaLua1.lib
-action: forcecopy
-
-//copy lua debug so
-origin: _external_shared@lua@debug@liblua5_5d.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@elypso-engine@_external_shared@KalaLua@debug@liblua5_5d.dll, ..@elypso-hub@_external_shared@KalaLua@debug@liblua5_5d.dll
-action: forcecopy
-
-//copy lua release so
-origin: _external_shared@lua@release@liblua5_5.dll
-target: ..@kalakit_test_projects@_external_shared@KalaLua@release@liblua5_5.dll, ..@elypso-engine@_external_shared@KalaLua@release@liblua5_5.dll, ..@elypso-hub@_external_shared@KalaLua@release@liblua5_5.dll
+origin: build@release-linux@libKalaLua1.so
+target: ..@kalakit_test_projects@_external_shared@KalaLua@release@libKalaLua1.so, ..@elypso-engine@_external_shared@KalaLua@release@libKalaLua1.so, ..@elypso-hub@_external_shared@KalaLua@release@libKalaLua1.so
 action: forcecopy
 
 //

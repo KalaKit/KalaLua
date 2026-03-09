@@ -75,7 +75,8 @@ namespace KalaLua::Core
 			return false;
 		}
 
-		luaL_openlibs(state);
+		luaL_requiref(state, LUA_GNAME, luaopen_base, 1); lua_pop(state, 1);
+
 		lua_atpanic(state, LuaPanic);
 
 		isInitialized = true;

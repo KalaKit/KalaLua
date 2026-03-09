@@ -2,40 +2,50 @@
 
 #version 1.0
 
-#include
-kh: "_external_shared"
+#references
+name_bin: KalaLua1
+dir_release: build/release-
+dir_debug: build/debug-
+name_lua: lua
+dir_lua_rel: _external_shared/lua/release
+dir_lua_deb: _external_shared/lua/debug
 
 #global
+compilerlauncher: ccache
 standard: c++20
 binarytype: shared
 sources: "src"
-headers: "include", #kh
+headers: "include", "_external_shared"
 warninglevel: normal
+customflags: export-compile-commands
 
 #profile debug-windows
-binaryname: KalaLua1d
+binaryname: ${name_bin}d
 compiler: clang-cl
 buildtype: debug
-buildpath: "build/debug-windows"
-links: "_external_shared/lua/debug/lua5_5d.lib"
+buildpath: "${dir_debug}windows"
+links: "${dir_lua_deb}/${name_lua}.lib"
 
 #profile release-windows
-binaryname: KalaLua1
+binaryname: ${name_bin}
 compiler: clang-cl
 buildtype: release
-buildpath: "build/release-windows"
-links: "_external_shared/lua/release/lua5_5.lib"
+buildpath: "${dir_release}windows"
+links: "${dir_lua_rel}/${name_lua}.lib"
 
 #profile debug-linux
-binaryname: libKalaLua1d
+binaryname: lib${name_bin}d
 compiler: clang++
 buildtype: debug
-buildpath: "build/debug-linux"
-links: "_external_shared/lua/debug/lua5_5d.a"
+buildpath: "${dir_debug}linux"
+links: "${dir_lua_deb}/lib${name_lua}.a"
+linkflags: Wl,-z,defs
 
 #profile release-linux
-binaryname: libKalaLua1
+binaryname: lib${name_bin}
 compiler: clang++
 buildtype: release
-buildpath: "build/release-linux"
-links: "_external_shared/lua/release/lua5_5.a"
+buildpath: "${dir_release}linux"
+links: "${dir_lua_rel}/lib${name_lua}.a"
+linkflags: Wl,-z,defs
+postbuildaction: strip --strip-unneeded ${dir_release}linux/lib${name_bin}.so
