@@ -14,14 +14,19 @@ extern "C"
 #include "lualib.h"
 }
 
+#include "core_utils.hpp"
 #include "log_utils.hpp"
 #include "string_utils.hpp"
 
 #include "core/kl_lua.hpp"
 #include "core/kl_core.hpp"
 
+using KalaHeaders::KalaCore::ContainsValue;
+using KalaHeaders::KalaCore::RemoveDuplicates;
+
 using KalaHeaders::KalaLog::Log;
 using KalaHeaders::KalaLog::LogType;
+
 using KalaHeaders::KalaString::SplitString;
 
 using KalaLua::Core::LuaVar;
@@ -53,7 +58,7 @@ namespace KalaLua::Core
 	static bool isInitialized{};
 	static lua_State* state{};
 
-	bool Lua::Initialize()
+	bool Lua::Initialize(const vector<LuaLibrary>& libs)
 	{
 		if (isInitialized)
 		{
@@ -78,12 +83,86 @@ namespace KalaLua::Core
 			return false;
 		}
 
-		luaL_requiref(state, LUA_GNAME, luaopen_base, 1); lua_pop(state, 1);
-		luaL_requiref(state, LUA_STRLIBNAME, luaopen_string, 1); lua_pop(state, 1);
-		luaL_requiref(state, LUA_TABLIBNAME, luaopen_table, 1); lua_pop(state, 1);
-		luaL_requiref(state, LUA_MATHLIBNAME, luaopen_math, 1); lua_pop(state, 1);
+		auto added_lib = [](string_view libName) -> void
+			{
+				Log::Print(
+					"Added Lua library '" + string(libName) + "'!",
+					"KALALUA",
+					LogType::LOG_INFO);
+			};
 
-		//luaL_openlibs(state);
+		if (ContainsValue(libs, LuaLibrary::LUA_ALL))
+		{
+			luaL_openlibs(state);
+
+			Log::Print(
+				"Added all Lua libraries!",
+				"KALALUA",
+				LogType::LOG_INFO);
+		}
+		else
+		{
+			vector<LuaLibrary> realLibs = libs;
+			RemoveDuplicates(realLibs);
+
+			luaL_requiref(state, LUA_GNAME, luaopen_base, 1); lua_pop(state, 1);
+
+			added_lib("base");
+
+			for (const auto& l : realLibs)
+			{
+				switch (l)
+				{
+					case LuaLibrary::LUA_COROUTINE:
+						luaL_requiref(state, LUA_COLIBNAME, luaopen_coroutine, 1);
+						lua_pop(state, 1);
+						added_lib("coroutine");
+						break;
+					case LuaLibrary::LUA_TABLE:
+						luaL_requiref(state, LUA_TABLIBNAME, luaopen_table, 1);
+						lua_pop(state, 1);
+						added_lib("table");
+						break;
+					case LuaLibrary::LUA_STRING:
+						luaL_requiref(state, LUA_STRLIBNAME, luaopen_string, 1);
+						lua_pop(state, 1);
+						added_lib("string");
+						break;
+					case LuaLibrary::LUA_MATH:
+						luaL_requiref(state, LUA_MATHLIBNAME, luaopen_math, 1);
+						lua_pop(state, 1);
+						added_lib("math");
+						break;
+					case LuaLibrary::LUA_UTF8:
+						luaL_requiref(state, LUA_UTF8LIBNAME, luaopen_utf8, 1);
+						lua_pop(state, 1);
+						added_lib("utf8");
+						break;
+					case LuaLibrary::LUA_PACKAGE:
+						luaL_requiref(state, LUA_LOADLIBNAME, luaopen_package, 1);
+						lua_pop(state, 1);
+						added_lib("package");
+						break;
+					case LuaLibrary::LUA_IO:
+						luaL_requiref(state, LUA_IOLIBNAME, luaopen_io, 1);
+						lua_pop(state, 1);
+						added_lib("io");
+						break;
+					case LuaLibrary::LUA_OS:
+						luaL_requiref(state, LUA_OSLIBNAME, luaopen_os, 1);
+						lua_pop(state, 1);
+						added_lib("os");
+						break;
+					case LuaLibrary::LUA_DEBUG:
+						luaL_requiref(state, LUA_DBLIBNAME, luaopen_debug, 1);
+						lua_pop(state, 1);
+						added_lib("debug");
+						break;
+
+					default: break;
+				}
+			}
+		}
 
 		lua_atpanic(state, LuaPanic);
 
