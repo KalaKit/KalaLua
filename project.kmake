@@ -3,7 +3,7 @@
 #version 1.0
 
 #references
-name_bin: KalaLua1
+name_bin: kalalua
 dir_release: build/release-
 dir_debug: build/debug-
 name_lua: lua
@@ -13,23 +13,24 @@ dir_lua_deb: _external_shared/lua/debug
 #global
 compilerlauncher: ccache
 standard: c++20
-binarytype: shared
+binarytype: static
 sources: "src"
 headers: "include", "_external_shared/KalaHeaders", "_external_shared/lua/include"
+defines: LIB_STATIC
 warninglevel: normal
-customflags: export-compile-commands
+customflags: export-compile-commands, export-vscode-sln
 
 #profile debug-windows
 binaryname: ${name_bin}d
 compiler: clang-cl
 buildtype: debug
 buildpath: "${dir_debug}windows"
-links: "${dir_lua_deb}/${name_lua}.lib"
+links: "${dir_lua_deb}/${name_lua}d.lib"
 
 #profile release-windows
 binaryname: ${name_bin}
 compiler: clang-cl
-buildtype: release
+buildtype: minsizerel
 buildpath: "${dir_release}windows"
 links: "${dir_lua_rel}/${name_lua}.lib"
 
@@ -38,14 +39,14 @@ binaryname: lib${name_bin}d
 compiler: clang++
 buildtype: debug
 buildpath: "${dir_debug}linux"
-links: "${dir_lua_deb}/lib${name_lua}.a"
+links: "${dir_lua_deb}/lib${name_lua}d.a"
 linkflags: Wl,-z,defs
 
 #profile release-linux
 binaryname: lib${name_bin}
 compiler: clang++
-buildtype: release
+buildtype: minsizerel
 buildpath: "${dir_release}linux"
 links: "${dir_lua_rel}/lib${name_lua}.a"
 linkflags: Wl,-z,defs
-postbuildaction: strip --strip-unneeded ${dir_release}linux/lib${name_bin}.so
+postbuildaction: strip --strip-unneeded ${dir_release}linux/${name_bin}.a
