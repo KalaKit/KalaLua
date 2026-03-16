@@ -49,7 +49,7 @@ origin: _external_shared@KalaHeaders
 target: ..@kalakit_test_projects@_external_shared@KalaHeaders, ..@elypso-engine@_external_shared@KalaHeaders, ..@elypso-hub@_external_shared@KalaHeaders
 action: copy
 
-//lua.h
-origin: _external_shared@lua@include@lua.h
-target: ..@kalakit_test_projects@_external_shared@KalaLua@include@lua.h, ..@elypso-engine@_external_shared@KalaLua@include@lua.h, ..@elypso-hub@_external_shared@KalaLua@include@lua.h
+//lua
+origin: _external_shared@lua
+target: ..@kalakit_test_projects@_external_shared@lua, ..@elypso-engine@_external_shared@lua, ..@elypso-hub@_external_shared@lua
 action: copy

@@ -3,22 +3,18 @@
 #version 1.0
 
 #references
-name_bin: kalalua
+name_bin: lua
 dir_release: build/release-
 dir_debug: build/debug-
-name_lua: lua
-dir_lua_rel: _external_shared/lua/release
-dir_lua_deb: _external_shared/lua/debug
 
 #global
 compilerlauncher: ccache
-standard: c++20
+standard: c17
 binarytype: static
-sources: "src"
-headers: "include", "_external_shared/KalaHeaders", "_external_shared/lua/include"
-defines: LIB_STATIC
+sources: "onelua.c"
+headers: "."
+defines: MAKE_LIB
 warninglevel: normal
-customflags: export-compile-commands, export-vscode-sln
 
 #profile debug-windows
 binaryname: ${name_bin}d
@@ -34,15 +30,13 @@ buildpath: "${dir_release}windows"
 
 #profile debug-linux
 binaryname: lib${name_bin}d
-compiler: clang++
+compiler: clang
 buildtype: debug
 buildpath: "${dir_debug}linux"
-links: "${dir_lua_deb}/lib${name_lua}d.a"
 
 #profile release-linux
 binaryname: lib${name_bin}
-compiler: clang++
+compiler: clang
 buildtype: minsizerel
 buildpath: "${dir_release}linux"
-links: "${dir_lua_rel}/lib${name_lua}.a"
 postbuildaction: strip --strip-unneeded ${dir_release}linux/lib${name_bin}.a
