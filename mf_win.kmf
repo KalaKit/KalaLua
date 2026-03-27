@@ -8,48 +8,34 @@
 
 //copy readme
 origin: README.md
-target: ..@kalakit_test_projects@_external_shared@KalaLua@README.md, ..@elypso-engine@_external_shared@KalaLua@README.md, ..@elypso-hub@_external_shared@KalaLua@README.md
+target: ..@external-shared@KalaLua@README.md
 action: forcecopy
 
 //copy license
 origin: LICENSE.md
-target: ..@kalakit_test_projects@_external_shared@KalaLua@LICENSE.md, ..@elypso-engine@_external_shared@KalaLua@LICENSE.md, ..@elypso-hub@_external_shared@KalaLua@LICENSE.md
+target: ..@external-shared@KalaLua@LICENSE.md
 action: forcecopy
 
 //copy include files
 origin: include
-target: ..@kalakit_test_projects@_external_shared@KalaLua@include, ..@elypso-engine@_external_shared@KalaLua@include, ..@elypso-hub@_external_shared@KalaLua@include
+target: ..@external-shared@KalaLua@include
 action: forcecopy
 
 //copy docs
 origin: docs
-target: ..@kalakit_test_projects@_external_shared@KalaLua@docs, ..@elypso-engine@_external_shared@KalaLua@docs, ..@elypso-hub@_external_shared@KalaLua@docs
+target: ..@external-shared@KalaLua@docs
 action: forcecopy
 
 //
 // BINARIES
 //
 
-//copy kalalua debug lib
-origin: build@debug-windows@kalaluad.lib
-target: ..@kalakit_test_projects@_external_shared@KalaLua@debug@kalaluad.lib, ..@elypso-engine@_external_shared@KalaLua@debug@kalaluad.lib, ..@elypso-hub@_external_shared@KalaLua@debug@kalaluad.lib
+//copy debug
+origin: build@debug-linux@kalaluad.lib
+target: ..@external-shared@KalaLua@debug@kalaluad.lib
 action: forcecopy
 
-//copy kalalua release lib
-origin: build@release-windows@kalalua.lib
-target: ..@kalakit_test_projects@_external_shared@KalaLua@release@kalalua.lib, ..@elypso-engine@_external_shared@KalaLua@release@kalalua.lib, ..@elypso-hub@_external_shared@KalaLua@release@kalalua.lib
+//copy release
+origin: build@release-linux@kalalua.lib
+target: ..@external-shared@KalaLua@release@kalalua.lib
 action: forcecopy
-
-//
-// EXTERNAL LIBRARIES
-//
-
-//KalaHeaders
-origin: _external_shared@KalaHeaders
-target: ..@kalakit_test_projects@_external_shared@KalaHeaders, ..@elypso-engine@_external_shared@KalaHeaders, ..@elypso-hub@_external_shared@KalaHeaders
-action: copy
-
-//lua
-origin: _external_shared@lua
-target: ..@kalakit_test_projects@_external_shared@lua, ..@elypso-engine@_external_shared@lua, ..@elypso-hub@_external_shared@lua
-action: copy

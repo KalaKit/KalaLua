@@ -7,15 +7,15 @@ name_bin: kalalua
 dir_release: build/release-
 dir_debug: build/debug-
 name_lua: lua
-dir_lua_rel: _external_shared/lua/release
-dir_lua_deb: _external_shared/lua/debug
+dir_lua_rel: ../external-shared/lua/release
+dir_lua_deb: ../external-shared/lua/debug
 
 #global
 compilerlauncher: ccache
 standard: c++20
 binarytype: static
 sources: "src"
-headers: "include", "_external_shared/KalaHeaders", "_external_shared/lua/include"
+headers: "include", "../kalaheaders", "../external-shared/lua/include"
 defines: LIB_STATIC
 warninglevel: normal
 customflags: export-compile-commands, export-vscode-sln
