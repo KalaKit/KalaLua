@@ -31,11 +31,11 @@ action: forcecopy
 //
 
 //copy debug
-origin: build@debug-linux@kalaluad.lib
+origin: build@debug-windows@kalaluad.lib
 target: ..@external-shared@KalaLua@debug@kalaluad.lib
 action: forcecopy
 
 //copy release
-origin: build@release-linux@kalalua.lib
+origin: build@release-windows@kalalua.lib
 target: ..@external-shared@KalaLua@release@kalalua.lib
 action: forcecopy
