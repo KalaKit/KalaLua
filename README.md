@@ -1,8 +1,6 @@
 # KalaLua
 
-**KalaLua** is a C++ 20 wrapper library around the Lua source code for Windows (Linux coming in the future) that allows you register C++ functions in **KalaLua** that can be called in your Lua script or to call Lua-created functions through **KalaLua** without needing to ever touch Lua source code itself in any way inside your own program unless you want Lua state pointer access.
-
-An example project showcasing how to use **KalaLua** has been created at the [kalakit_test_projects repository](https://github.com/greeenlaser/kalakit_test_projects/tree/main/KalaLua).
+**KalaLua** is a C++ 20 wrapper library around the Lua source code for Windows and Linux that allows you register C++ functions in **KalaLua** that can be called in your Lua script or to call Lua-created functions through **KalaLua** without needing to ever touch Lua source code itself in any way inside your own program unless you want Lua state pointer access.
 
 ## Features
 
@@ -58,6 +56,8 @@ You can call a Lua function with Lua::CallFunction which returns nothing or one 
 ## Docs
 
 [How to build from source](docs/build_from_source.md)
+
+[How to use](docs/how_to_use.md)
 
 [External libraries](docs/external_libraries.md)
 
