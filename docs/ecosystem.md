@@ -27,7 +27,7 @@ the executables (rely on libs or clis or headers in some way):
 
 ## Elypso Engine
 
-C++20 OpenGL and Vulkan game engine for Windows and Linux.
+C++20 Vulkan game engine for Windows and Linux.
 
 https://github.com/Lost-Empire-Entertainment/Elypso-engine
 
@@ -85,7 +85,7 @@ https://github.com/KalaKit/KalaFont
 
 ## KalaWindow
 
-C++20 window library with input, crash handling and GL/VK context creation on Windows and Linux.
+C++20 window library with input, crash handling and Vulkan context creation on Windows and Linux.
 
 https://github.com/KalaKit/KalaWindow
 
@@ -93,7 +93,7 @@ https://github.com/KalaKit/KalaWindow
 
 ## KalaGraphics
 
-C++20 graphics library that utilizes a GL/VK agnostic API for game and software development on Windows and Linux.
+C++20 graphics library that utilizes a Vulkan agnostic API for game and software development on Windows and Linux.
 
 https://github.com/KalaKit/KalaGraphics
 
