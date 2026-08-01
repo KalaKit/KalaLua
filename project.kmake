@@ -12,6 +12,7 @@ dir_lua_deb: ../external-shared/lua/debug
 
 #global
 compilerlauncher: ccache
+compiler: clang++
 standard: c++20
 binarytype: static
 sources: "src"
@@ -22,26 +23,22 @@ customflags: export-compile-commands, export-vscode-sln
 
 #profile debug-windows
 binaryname: ${name_bin}d
-compiler: clang++
 buildtype: debug
 buildpath: "${dir_debug}windows"
 
 #profile release-windows
 binaryname: ${name_bin}
-compiler: clang++
 buildtype: minsizerel
 buildpath: "${dir_release}windows"
 
 #profile debug-linux
 binaryname: lib${name_bin}d
-compiler: clang++
 buildtype: debug
 buildpath: "${dir_debug}linux"
 links: "${dir_lua_deb}/lib${name_lua}d.a"
 
 #profile release-linux
 binaryname: lib${name_bin}
-compiler: clang++
 buildtype: minsizerel
 buildpath: "${dir_release}linux"
 links: "${dir_lua_rel}/lib${name_lua}.a"
