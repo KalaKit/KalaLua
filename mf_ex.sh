@@ -93,3 +93,16 @@ mf --f "${IN_LUA}/${README}" --t "${OUT_DIR}/${OUT_LUA_NAME}/${README}"
 mf --f "${IN_LUA}/${LICENSE}" --t "${OUT_DIR}/${OUT_LUA_NAME}/${LICENSE}"
 
 mf --f "${IN_LUA}/include" --t "${OUT_DIR}/${OUT_LUA_NAME}"
+
+# Lua binary
+case "$1" in
+    --linux)
+        mf --f "${IN_LUA}/release/liblua.a" --t "${OUT_DIR}/${OUT_LUA_NAME}/liblua.a"
+        ;;
+    --win-on-linux)
+        mf --f "${IN_LUA}/release/lua-gnu.lib" --t "${OUT_DIR}/${OUT_LUA_NAME}/lua-gnu.lib"
+        ;;
+    --windows)
+        mf --f "${IN_LUA}/release/lua.lib" --t "${OUT_DIR}/${OUT_LUA_NAME}/lua.lib"
+        ;;
+esac
