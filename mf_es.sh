@@ -4,23 +4,47 @@
 
 set -e
 
+#
 # References
+#
 
-LIB_NAME=libkalalua
-LIB_EXT=a
+case "$1" in
+    --linux)
+        LIB_NAME=libkalalua
+        LIB_EXT=a
+        LIB_ORIGIN=linux
+        ;;
+    --win-on-linux)
+        LIB_NAME=kalalua-gnu
+        LIB_EXT=lib
+        LIB_ORIGIN=win-on-linux
+        ;;
+    --windows)
+        LIB_NAME=kalalua
+        LIB_EXT=lib
+        LIB_ORIGIN=windows
+        ;;
+    *)
+        echo "Error: Argument must be --linux, --win-on-linux or --windows" >&2
+        exit 1
+        ;;
+esac
 
-LIB_ORIGIN=linux
 TARGET_NAME=KalaLua
 LIB_DEST=../external-shared/${TARGET_NAME}
 
+#
 # Core stuff
+#
 
 mf --o --f README.md --t "${LIB_DEST}/README.md"
 mf --o --f LICENSE.md --t "${LIB_DEST}/LICENSE.md"
 mf --o --f include --t "${LIB_DEST}"
 mf --o --f docs --t "${LIB_DEST}"
 
+#
 # Binaries
+#
 
 mf --o --f "build/debug-${LIB_ORIGIN}/${LIB_NAME}d.${LIB_EXT}" --t "${LIB_DEST}/debug/${LIB_NAME}d.${LIB_EXT}"
 mf --o --f "build/release-${LIB_ORIGIN}/${LIB_NAME}.${LIB_EXT}" --t "${LIB_DEST}/release/${LIB_NAME}.${LIB_EXT}"
