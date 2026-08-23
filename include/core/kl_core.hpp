@@ -19,6 +19,7 @@ namespace KalaLua::Core
 	{
 	public:
 		//Force-close the program right this very moment with no cleanups
+		KNORETURN
 		static void ForceClose(
 			const string& target,
 			const string& reason);

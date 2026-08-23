@@ -349,7 +349,8 @@ namespace KalaLua::Core
 		}
 		else
 		{
-			const vector<string> parts = SplitString(functionNamespace, ".");
+			vector<string> parts{};
+			string _ = SplitString(functionNamespace, ".", parts);
 
 			lua_pushglobaltable(state);
 
@@ -582,7 +583,8 @@ namespace KalaLua::Core
 		//namespace has dots
 		else
 		{
-			const vector<string> parts = SplitString(functionNamespace, ".");
+			vector<string> parts{};
+			string _ = SplitString(functionNamespace, ".", parts);
 
 			lua_pushglobaltable(state);
 
@@ -704,7 +706,8 @@ namespace KalaLua::Core
 		//namespace has dots
 		else
 		{
-			const vector<string> parts = SplitString(functionNamespace, ".");
+			vector<string> parts{};
+			string _ = SplitString(functionNamespace, ".", parts);
 
 			lua_pushglobaltable(state);
 

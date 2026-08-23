@@ -100,7 +100,7 @@ namespace KalaLua::Core
 
 	//Returns false if variable not found in LuaVar is used
 	template<typename T>
-	constexpr bool IsLuaVarCompatible =
+	static constexpr bool IsLuaVarCompatible =
 		is_same_v<T, int> 
 		|| is_same_v<T, float>
 		|| is_same_v<T, double>
@@ -112,15 +112,19 @@ namespace KalaLua::Core
 	public:
 		//Initialize KalaLua, does not load scripts or functions.
 		//Optionally add extra Lua libraries, base Lua functions (LUA_GNAME / luaopen_base) are always added.
+		KNODISCARD
 		static bool Initialize(const vector<LuaLibrary>& libs = {});
 
+		KNODISCARD
 		static bool IsInitialized();
 
 		//Get the pointer to lua state stored within KalaLua
 		//after it has initialized, recommended only for advanced users
+		KNODISCARD
 		static lua_State* GetLuaState();
 
 		//Load and compile a lua script for use via CallFunction
+		KNODISCARD
 		static bool LoadScript(string_view script);
 
 		//Call a function from one of the loaded lua scripts with N number of args,
@@ -133,7 +137,7 @@ namespace KalaLua::Core
 			string_view functionNamespace,
 			const vector<LuaVar>& args = {})
 		{
-			_CallFunction(
+			bool _ = _CallFunction(
 				functionName,
 				functionNamespace,
 				args);
@@ -281,6 +285,7 @@ namespace KalaLua::Core
 		}
 
 		template<typename... Args, size_t... I, typename R>
+		KNODISCARD
 		static inline R InvokeTypedReturn(
 			const function<R(Args...)>& targetFunction,
 			const vector<LuaVar>& args,
@@ -291,6 +296,7 @@ namespace KalaLua::Core
 
 		//Numeric extraction helper to help lua cast into int/float/double correctly
 		template<typename T>
+		KNODISCARD
 		static T ExtractLuaVar(const LuaVar& v)
 		{
 			if constexpr (is_same_v<T, int>)
@@ -319,6 +325,7 @@ namespace KalaLua::Core
 		}
 
 		//The internal true function caller
+		KNODISCARD
 		static bool _CallFunction(
 			string_view functionName,
 			string_view functionNamespace,
@@ -327,6 +334,7 @@ namespace KalaLua::Core
 
 		//The internal true register function that is used
 		//to register the function after parsing args
+		KNODISCARD
 		static bool _RegisterFunction(
 			string_view functionName,
 			string_view functionNamespace,

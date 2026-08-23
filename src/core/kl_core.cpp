@@ -46,5 +46,7 @@ namespace KalaLua::Core
 #else
 		raise(SIGTRAP);
 #endif
+
+		_Exit(1);
 	}
 }
