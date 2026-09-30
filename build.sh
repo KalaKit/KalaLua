@@ -8,7 +8,7 @@ set -e
 # References
 #
 
-VERSION=1-2-0
+VERSION=1-1-0
 BIN_NAME=kalalua
 
 BUILD_DIR=build
@@ -140,6 +140,7 @@ mf --o --f "${TEMP_REL_DIR}/${BIN_REL}" --t "${TARGET_REL_DIR}/${BIN_REL}"
 
 mf --o --f "README.md" --t "${TARGET_REL_DIR}/README.md"
 mf --o --f "LICENSE.md" --t "${TARGET_REL_DIR}/LICENSE.md"
+mf --o --f "CHANGES.md" --t "${TARGET_REL_DIR}/CHANGES.md"
 
 mf --o --f "docs" --t "${TARGET_REL_DIR}"
 
@@ -164,6 +165,7 @@ else
 
     mf --o --f "README.md" --t "${TARGET_DEB_DIR}/README.md"
     mf --o --f "LICENSE.md" --t "${TARGET_DEB_DIR}/LICENSE.md"
+    mf --o --f "CHANGES.md" --t "${TARGET_DEB_DIR}/CHANGES.md"
 
     mf --o --f "docs" --t "${TARGET_DEB_DIR}"
 
