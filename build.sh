@@ -142,7 +142,7 @@ mf --o --f "docs" --t "${TARGET_REL_DIR}"
 mf --o --f "${KH_DIR}" --t "${TARGET_REL_DIR}"
 
 mkdir "${TARGET_REL_DIR}/lua"
-cp -R "${SOURCE_LUA_REL_DIR}/." --t "${TARGET_REL_DIR}/lua/"
+cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
 
 # Debug
 
@@ -170,7 +170,7 @@ else
     mf --o --f "${KH_DIR}" --t "${TARGET_DEB_DIR}"
 
     mkdir "${TARGET_DEB_DIR}/lua"
-    cp -R "${SOURCE_LUA_DEB_DIR}/." --t "${TARGET_DEB_DIR}/lua/"
+    cp -R "${SOURCE_LUA_DEB_DIR}/." "${TARGET_DEB_DIR}/lua/"
 fi
 
 #
