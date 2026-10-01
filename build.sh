@@ -141,8 +141,19 @@ mf --o --f "docs" --t "${TARGET_REL_DIR}"
 
 mf --o --f "${KH_DIR}" --t "${TARGET_REL_DIR}"
 
-mkdir "${TARGET_REL_DIR}/lua"
-cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
+if [ "$2" = "--export" ]; then
+    if [ -d "${TARGET_REL_DIR}/lua" ]; then
+        rm -rf "${TARGET_REL_DIR}/lua"
+    fi
+
+    mkdir "${TARGET_REL_DIR}/lua"
+    cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
+else
+    if [ ! -d "${TARGET_REL_DIR}/lua" ]; then
+        mkdir "${TARGET_REL_DIR}/lua"
+        cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
+    fi
+fi
 
 # Debug
 
@@ -169,8 +180,10 @@ else
 
     mf --o --f "${KH_DIR}" --t "${TARGET_DEB_DIR}"
 
-    mkdir "${TARGET_DEB_DIR}/lua"
-    cp -R "${SOURCE_LUA_DEB_DIR}/." "${TARGET_DEB_DIR}/lua/"
+    if [ ! -d "${TARGET_DEB_DIR}/lua" ]; then
+        mkdir "${TARGET_DEB_DIR}/lua"
+        cp -R "${SOURCE_LUA_DEB_DIR}/." "${TARGET_DEB_DIR}/lua/"
+    fi
 fi
 
 #
