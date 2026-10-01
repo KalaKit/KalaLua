@@ -141,18 +141,9 @@ mf --o --f "docs" --t "${TARGET_REL_DIR}"
 
 mf --o --f "${KH_DIR}" --t "${TARGET_REL_DIR}"
 
-if [ "$2" = "--export" ]; then
-    if [ -d "${TARGET_REL_DIR}/lua" ]; then
-        rm -rf "${TARGET_REL_DIR}/lua"
-    fi
-
+if [ ! -d "${TARGET_REL_DIR}/lua" ]; then
     mkdir "${TARGET_REL_DIR}/lua"
     cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
-else
-    if [ ! -d "${TARGET_REL_DIR}/lua" ]; then
-        mkdir "${TARGET_REL_DIR}/lua"
-        cp -R "${SOURCE_LUA_REL_DIR}/." "${TARGET_REL_DIR}/lua/"
-    fi
 fi
 
 # Debug
