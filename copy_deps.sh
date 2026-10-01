@@ -35,9 +35,22 @@ mf --f "${KH_ORIGIN}/include" --t "${KH_TARGET}"
 # Lua
 mkdir "${LUA_TARGET}"
 
-mf --f "${LUA_ORIGIN}/LICENSE" --t "${LUA_TARGET}/LICENSE"
+if [ -d "${LUA_ORIGIN}/release-windows" ]; then
+    mf --f "${LUA_ORIGIN}/release-windows" --t "${LUA_TARGET}"
+fi
+if [ -d "${LUA_ORIGIN}/release-windows-gnu" ]; then
+    mf --f "${LUA_ORIGIN}/release-windows-gnu" --t "${LUA_TARGET}"
+fi
+if [ -d "${LUA_ORIGIN}/release-linux" ]; then
+    mf --f "${LUA_ORIGIN}/release-linux" --t "${LUA_TARGET}"
+fi
 
-mf --f "${LUA_ORIGIN}/include" --t "${LUA_TARGET}"
-
-mf --f "${LUA_ORIGIN}/release" --t "${LUA_TARGET}"
-mf --f "${LUA_ORIGIN}/debug" --t "${LUA_TARGET}"
+if [ -d "${LUA_ORIGIN}/debug-windows" ]; then
+    mf --f "${LUA_ORIGIN}/debug-windows" --t "${LUA_TARGET}"
+fi
+if [ -d "${LUA_ORIGIN}/debug-windows-gnu" ]; then
+    mf --f "${LUA_ORIGIN}/debug-windows-gnu" --t "${LUA_TARGET}"
+fi
+if [ -d "${LUA_ORIGIN}/debug-linux" ]; then
+    mf --f "${LUA_ORIGIN}/debug-linux" --t "${LUA_TARGET}"
+fi

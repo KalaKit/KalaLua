@@ -39,6 +39,9 @@ case "$1" in
 
         TARGET_REL_DIR=${BUILD_DIR}/${VERSION}/release-linux
         TARGET_DEB_DIR=${BUILD_DIR}/${VERSION}/debug-linux
+
+        SOURCE_LUA_REL_DIR=${LUA_DIR}/release-linux
+        SOURCE_LUA_DEB_DIR=${LUA_DIR}/debug-linux
         ;;
     --windows-gnu)
         BIN_NAME_FRONT=
@@ -53,6 +56,9 @@ case "$1" in
 
         TARGET_REL_DIR=${BUILD_DIR}/${VERSION}/release-windows-gnu
         TARGET_DEB_DIR=${BUILD_DIR}/${VERSION}/debug-windows-gnu
+
+        SOURCE_LUA_REL_DIR=${LUA_DIR}/release-windows-gnu
+        SOURCE_LUA_DEB_DIR=${LUA_DIR}/debug-windows-gnu
         ;;
     --windows)
         BIN_NAME_FRONT=
@@ -67,6 +73,9 @@ case "$1" in
 
         TARGET_REL_DIR=${BUILD_DIR}/${VERSION}/release-windows
         TARGET_DEB_DIR=${BUILD_DIR}/${VERSION}/debug-windows
+
+        SOURCE_LUA_REL_DIR=${LUA_DIR}/release-windows
+        SOURCE_LUA_DEB_DIR=${LUA_DIR}/debug-windows
         ;;
     *)
         echo "Error: Argument must be --linux, --windows-gnu or --windows" >&2
@@ -131,7 +140,9 @@ mf --o --f "CHANGES.md" --t "${TARGET_REL_DIR}/CHANGES.md"
 mf --o --f "docs" --t "${TARGET_REL_DIR}"
 
 mf --o --f "${KH_DIR}" --t "${TARGET_REL_DIR}"
-mf --o --f "${LUA_DIR}" --t "${TARGET_REL_DIR}"
+
+mkdir "${TARGET_REL_DIR}/lua"
+cp -R "${SOURCE_LUA_REL_DIR}/." --t "${TARGET_REL_DIR}/lua/"
 
 # Debug
 
@@ -157,7 +168,9 @@ else
     mf --o --f "docs" --t "${TARGET_DEB_DIR}"
 
     mf --o --f "${KH_DIR}" --t "${TARGET_DEB_DIR}"
-    mf --o --f "${LUA_DIR}" --t "${TARGET_DEB_DIR}"
+
+    mkdir "${TARGET_DEB_DIR}/lua"
+    cp -R "${SOURCE_LUA_DEB_DIR}/." --t "${TARGET_DEB_DIR}/lua/"
 fi
 
 #
