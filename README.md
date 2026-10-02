@@ -64,6 +64,4 @@ You can call a Lua function with Lua::CallFunction which returns nothing or one 
 
 [How to use](docs/how_to_use.md)
 
-[External libraries](docs/external_libraries.md)
-
 [Lost Empire Entertainment and KalaKit ecosystem](docs/ecosystem.md)
