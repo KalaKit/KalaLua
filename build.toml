@@ -1,0 +1,58 @@
+[project]
+name="kalalua"
+version="1-7-0"
+kmake="project.kmake"
+
+[references]
+dir_kh="../kalaheaders"
+dir_lua="../../_forks/lua/_build/build/5-5-1"
+ext_kh="external/kalaheaders"
+ext_lua="external/lua"
+
+[windows-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+lua_stuff=[ "${dir_lua}", "${ext_lua}", "copy" ]
+
+[windows-post-build-sync]
+kl_bin_rel=[ "build/temp/release-windows/kalalua.lib", "build/${version}/kalalua.lib", "copy" ]
+kl_bin_deb=[ "build/temp/debug-windows/kalaluad.lib", "build/${version}/kalaluad.lib", "copy" ]
+kl_include=[ "include", "build/${version}/include", "copy" ]
+kl_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kl_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kl_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
+lua_stuff=[ "${ext_lua}", "build/${version}/lua", "copy" ]
+
+[windows-gnu-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+lua_stuff=[ "${dir_lua}", "${ext_lua}", "copy" ]
+
+[windows-gnu-post-build-sync]
+kl_bin_rel=[ "build/temp/release-windows-gnu/kalalua-gnu.lib", "build/${version}/kalalua-gnu.lib", "copy" ]
+kl_bin_deb=[ "build/temp/debug-windows-gnu/kalalua-gnud.lib", "build/${version}/kalalua-gnud.lib", "copy" ]
+kl_include=[ "include", "build/${version}/include", "copy" ]
+kl_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kl_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kl_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
+lua_stuff=[ "${ext_lua}", "build/${version}/lua", "copy" ]
+
+[linux-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+lua_stuff=[ "${dir_lua}", "${ext_lua}", "copy" ]
+
+[linux-post-build-sync]
+kl_bin_rel=[ "build/temp/release-linux/libkalalua.a", "build/${version}/libkalalua.a", "copy" ]
+kl_bin_deb=[ "build/temp/debug-linux/libkalaluad.a", "build/${version}/libkalaluad.a", "copy" ]
+kl_include=[ "include", "build/${version}/include", "copy" ]
+kl_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kl_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kl_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
+lua_stuff=[ "${ext_lua}", "build/${version}/lua", "copy" ]

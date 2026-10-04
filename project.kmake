@@ -7,8 +7,6 @@ name_bin: kalalua
 dir_release: build/temp/release-
 dir_debug: build/temp/debug-
 name_lua: lua
-dir_lua_rel: external/lua/release-
-dir_lua_deb: external/lua/debug-
 
 #global
 compilerlauncher: ccache
@@ -16,7 +14,7 @@ compiler: clang++
 standard: c++20
 binarytype: static
 sources: "src"
-headers: "include", "external/kalaheaders/include"
+headers: "include", "external/kalaheaders/include", "external/lua/include"
 defines: LIB_STATIC
 warninglevel: normal
 customflags: export-compile-commands, export-vscode-sln
@@ -25,36 +23,30 @@ customflags: export-compile-commands, export-vscode-sln
 binaryname: ${name_bin}d
 buildtype: debug
 buildpath: "${dir_debug}windows"
-headers: "${dir_lua_deb}windows/include"
 
 #profile release-windows
 binaryname: ${name_bin}
 buildtype: minsizerel
 buildpath: "${dir_release}windows"
-headers: "${dir_lua_rel}windows/include"
 
 #profile debug-windows-gnu
 targettype: windows-gnu
 binaryname: ${name_bin}-gnud
 buildtype: debug
 buildpath: "${dir_debug}windows-gnu"
-headers: "${dir_lua_deb}windows-gnu/include"
 
 #profile release-windows-gnu
 targettype: windows-gnu
 binaryname: ${name_bin}-gnu
 buildtype: minsizerel
 buildpath: "${dir_release}windows-gnu"
-headers: "${dir_lua_rel}windows-gnu/include"
 
 #profile debug-linux
 binaryname: lib${name_bin}d
 buildtype: debug
 buildpath: "${dir_debug}linux"
-headers: "${dir_lua_deb}linux/include"
 
 #profile release-linux
 binaryname: lib${name_bin}
 buildtype: minsizerel
 buildpath: "${dir_release}linux"
-headers: "${dir_lua_rel}linux/include"
