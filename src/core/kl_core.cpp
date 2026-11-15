@@ -35,7 +35,7 @@ namespace KalaLua::Core
 		Log::Print(
 			reason,
 			target,
-			LogType::LOG_ERROR,
+			LogType::ERROR,
 			2,
 			true,
 			TimeFormat::TIME_NONE,
