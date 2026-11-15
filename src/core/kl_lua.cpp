@@ -91,7 +91,7 @@ namespace KalaLua::Core
 					LogType::INFO);
 			};
 
-		if (ContainsValue(libs, LuaLibrary::LUA_ALL))
+		if (ContainsValue(libs, LuaLibrary::ALL))
 		{
 			luaL_openlibs(state);
 
@@ -113,47 +113,47 @@ namespace KalaLua::Core
 			{
 				switch (l)
 				{
-					case LuaLibrary::LUA_COROUTINE:
+					case LuaLibrary::COROUTINE:
 						luaL_requiref(state, LUA_COLIBNAME, luaopen_coroutine, 1);
 						lua_pop(state, 1);
 						added_lib("coroutine");
 						break;
-					case LuaLibrary::LUA_TABLE:
+					case LuaLibrary::TABLE:
 						luaL_requiref(state, LUA_TABLIBNAME, luaopen_table, 1);
 						lua_pop(state, 1);
 						added_lib("table");
 						break;
-					case LuaLibrary::LUA_STRING:
+					case LuaLibrary::STRING:
 						luaL_requiref(state, LUA_STRLIBNAME, luaopen_string, 1);
 						lua_pop(state, 1);
 						added_lib("string");
 						break;
-					case LuaLibrary::LUA_MATH:
+					case LuaLibrary::MATH:
 						luaL_requiref(state, LUA_MATHLIBNAME, luaopen_math, 1);
 						lua_pop(state, 1);
 						added_lib("math");
 						break;
-					case LuaLibrary::LUA_UTF8:
+					case LuaLibrary::UTF8:
 						luaL_requiref(state, LUA_UTF8LIBNAME, luaopen_utf8, 1);
 						lua_pop(state, 1);
 						added_lib("utf8");
 						break;
-					case LuaLibrary::LUA_PACKAGE:
+					case LuaLibrary::PACKAGE:
 						luaL_requiref(state, LUA_LOADLIBNAME, luaopen_package, 1);
 						lua_pop(state, 1);
 						added_lib("package");
 						break;
-					case LuaLibrary::LUA_IO:
+					case LuaLibrary::IO:
 						luaL_requiref(state, LUA_IOLIBNAME, luaopen_io, 1);
 						lua_pop(state, 1);
 						added_lib("io");
 						break;
-					case LuaLibrary::LUA_OS:
+					case LuaLibrary::OS:
 						luaL_requiref(state, LUA_OSLIBNAME, luaopen_os, 1);
 						lua_pop(state, 1);
 						added_lib("os");
 						break;
-					case LuaLibrary::LUA_DEBUG:
+					case LuaLibrary::DEBUG:
 						luaL_requiref(state, LUA_DBLIBNAME, luaopen_debug, 1);
 						lua_pop(state, 1);
 						added_lib("debug");
